@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎬 Lanzador — VideoClip Creator</title>
+<style>
+  :root{--acc:#7c5cff;--acc2:#00e0a4;--bg:#0b0b12;--card:#171722;--txt:#eceaf5;--mut:#9a97ad;--warn:#ffb454}
+  *{box-sizing:border-box;margin:0}
+  body{background:radial-gradient(1200px 600px at 50% -10%,#221a4d 0%,var(--bg) 60%);
+       color:var(--txt);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;
+       display:flex;flex-direction:column;align-items:center;padding:40px 16px}
+  h1{font-size:2rem;margin-bottom:4px}
+  .sub{color:var(--mut);margin-bottom:32px;text-align:center}
+  .play{width:190px;height:190px;border-radius:50%;border:0;cursor:pointer;font-size:4.2rem;
+        background:linear-gradient(135deg,var(--acc),#4a2fe0);color:#fff;
+        box-shadow:0 0 60px rgba(124,92,255,.5),inset 0 -6px 18px rgba(0,0,0,.35);
+        transition:.25s;display:flex;align-items:center;justify-content:center;padding-left:14px}
+  .play:hover{transform:scale(1.06);box-shadow:0 0 90px rgba(124,92,255,.75)}
+  .play:active{transform:scale(.97)}
+  .opciones{display:flex;gap:18px;margin:26px 0 8px;flex-wrap:wrap;justify-content:center}
+  .opciones label{background:var(--card);border:1px solid #2a2a3c;border-radius:12px;
+                  padding:10px 16px;cursor:pointer;display:flex;gap:8px;align-items:center;font-size:.95rem}
+  .opciones input{accent-color:var(--acc);width:17px;height:17px}
+  .pasos{max-width:640px;width:100%;margin-top:34px;display:none}
+  .paso{background:var(--card);border:1px solid #26263a;border-radius:14px;padding:16px 20px;
+        margin-bottom:12px;display:flex;gap:14px;align-items:flex-start}
+  .paso .num{background:var(--acc);color:#fff;font-weight:800;min-width:30px;height:30px;
+             border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .paso code{background:#101018;padding:2px 8px;border-radius:6px;color:var(--acc2)}
+  .estados{display:flex;gap:14px;margin-top:26px;flex-wrap:wrap;justify-content:center}
+  .estado{background:var(--card);border:1px solid #26263a;border-radius:14px;padding:14px 22px;
+          min-width:210px;text-align:center}
+  .estado .dot{font-size:1.5rem}
+  .estado.ok{border-color:#1d4d3f;background:#10241e}
+  .estado small{color:var(--mut);display:block;margin-top:4px}
+  .ir{margin-top:30px;display:none;background:linear-gradient(135deg,var(--acc2),#00b383);
+      color:#04241c;font-weight:800;font-size:1.15rem;padding:16px 40px;border-radius:14px;
+      text-decoration:none;transition:.2s}
+  .ir:hover{transform:translateY(-2px)}
+  .aviso{margin-top:22px;background:#3a2a10;border:1px solid #6b4d1d;color:var(--warn);
+         padding:12px 18px;border-radius:12px;max-width:640px;display:none;font-size:.92rem}
+  .links{margin-top:14px;display:none;gap:10px;flex-wrap:wrap;justify-content:center}
+  .links a{background:#23233a;color:var(--txt);padding:10px 18px;border-radius:10px;
+           text-decoration:none;font-size:.9rem;border:1px solid #34344e}
+  .cfg-aviso{background:#3d1620;border:1px solid #6b2135;color:#ffb3c0;padding:12px 18px;
+             border-radius:12px;max-width:640px;margin-bottom:20px;display:none;font-size:.9rem}
+  footer{margin-top:46px;color:var(--mut);font-size:.8rem;text-align:center}
+</style>
+</head>
+<body>
+
+<h1>🎬 Lanzador VideoClip Creator</h1>
+<p class="sub">Pulsa PLAY → se abren las pestañas de Colab con el código ya cargado.<br>
+En cada una solo tienes que pulsar <b>Ctrl+F9</b> (Ejecutar todas). Ellas se conectan solas.</p>
+
+<div class="cfg-aviso" id="cfgAviso">
+  ⚠️ <b>Falta configurar esta página:</b> edita <code>launcher/index.html</code> y rellena el bloque
+  <code>CFG</code> de arriba (tu repo de GitHub, tu dominio API y la URL del creador).
+</div>
+
+<button class="play" id="btnPlay" title="Encender los workers">▶</button>
+
+<div class="opciones">
+  <label><input type="checkbox" id="chkVideo" checked disabled> 🎬 Worker VIDEO (obligatorio)</label>
+  <label><input type="checkbox" id="chkLip" checked> 💬 Worker LIPSYNC (personajes que cantan)</label>
+</div>
+
+<div class="aviso" id="avisoPopups">
+  ⚠️ Tu navegador bloqueó alguna pestaña. <b>Permite ventanas emergentes</b> para esta página
+  (icono en la barra de direcciones) o ábrelas con estos botones:
+</div>
+<div class="links" id="linksManuales"></div>
+
+<div class="pasos" id="pasos">
+  <div class="paso"><div class="num">1</div><div>Se han abierto las pestañas de <b>Google Colab</b>
+    con el código ya cargado. Si es la primera vez, Colab puede pedirte iniciar sesión con Google
+    y autorizar el acceso a GitHub.</div></div>
+  <div class="paso"><div class="num">2</div><div>En <b>cada pestaña</b>: menú
+    <code>Entorno de ejecución → Cambiar tipo de entorno → GPU (T4)</code> si no lo está ya.</div></div>
+  <div class="paso"><div class="num">3</div><div>En <b>cada pestaña</b> pulsa
+    <code>Ctrl+F9</code> (o menú <code>Entorno de ejecución → Ejecutar todas</code>).
+    La primera vez tarda 5-10 min (descarga el modelo). Verás <code>🟢 WORKER ACTIVO</code>.</div></div>
+  <div class="paso"><div class="num">4</div><div>Los workers se <b>auto-registran</b> en tu servidor.
+    Cuando veas el ✅ verde aquí abajo, entra al creador. <b>No cierres las pestañas</b> mientras trabajas.</div></div>
+</div>
+
+<div class="estados">
+  <div class="estado" id="estVideo"><div class="dot">⏳</div><b>Worker VIDEO</b><small>esperando conexión…</small></div>
+  <div class="estado" id="estLip"><div class="dot">⏳</div><b>Worker LIPSYNC</b><small>esperando conexión…</small></div>
+</div>
+
+<a class="ir" id="btnIr" href="#">🎬 Ir al creador de videoclips →</a>
+
+<footer>VideoClip Creator IA · los workers de Colab duran unas horas; si caducan, vuelve a darle a PLAY.</footer>
+
+<script>
+/* ============ CONFIGURA AQUÍ (una sola vez) ============ */
+const CFG = {
+  repo:    "Luimy16/ai-producer",
+  rama:    "main",
+  api:     "https://api.ai-producer-2qd.pages.dev",
+  creador: "https://ai-producer-2qd.pages.dev/crear-videoclip"
+};
+/* ======================================================= */
+
+const colabURL = (rol) =>
+  `https://colab.research.google.com/github/${CFG.repo}/blob/${CFG.rama}/notebooks/worker_${rol}.ipynb`;
+
+const $ = (id) => document.getElementById(id);
+const btnIr = $("btnIr");
+
+// aviso si CFG no está configurada
+if (CFG.repo.includes("TU-USUARIO") || CFG.api.includes("tudominio")) {
+  $("cfgAviso").style.display = "block";
+}
+btnIr.href = CFG.creador;
+
+function abrirPestanas() {
+  const roles = ["video"];
+  if ($("chkLip").checked) roles.push("lipsync");
+  let bloqueado = false;
+  const links = $("linksManuales");
+  links.innerHTML = "";
+  roles.forEach((rol, i) => {
+    // pequeño retardo ayuda a que el navegador no bloquee la 2ª pestaña
+    setTimeout(() => {
+      const w = window.open(colabURL(rol), "_blank");
+      if (!w) bloqueado = true;
+    }, i * 350);
+    const a = document.createElement("a");
+    a.href = colabURL(rol); a.target = "_blank";
+    a.textContent = rol === "video" ? "🎬 Abrir Colab VIDEO" : "💬 Abrir Colab LIPSYNC";
+    links.appendChild(a);
+  });
+  links.style.display = "flex";
+  $("pasos").style.display = "block";
+  setTimeout(() => { if (bloqueado) $("avisoPopups").style.display = "block"; }, 900);
+}
+
+$("btnPlay").addEventListener("click", abrirPestanas);
+
+// ---- sondeo del estado de workers cada 8 s ----
+function pintar(id, info) {
+  const el = $(id);
+  if (info && info.conectado) {
+    el.classList.add("ok");
+    el.querySelector(".dot").textContent = "✅";
+    el.querySelector("small").textContent =
+      "conectado (registrado hace " + (info.hace_segundos ?? "?") + " s)";
+    return true;
+  }
+  return false;
+}
+
+async function sondear() {
+  try {
+    const r = await fetch(CFG.api + "/api/workers/estado", { cache: "no-store" });
+    const j = await r.json();
+    const videoOk = pintar("estVideo", j.video);
+    pintar("estLip", j.lipsync);
+    if (videoOk) btnIr.style.display = "inline-block";
+  } catch (e) {
+    $("estVideo").querySelector("small").textContent = "API sin responder (revisa CFG.api / DNS)";
+  }
+}
+sondear();
+setInterval(sondear, 8000);
+</script>
+</body>
+</html>

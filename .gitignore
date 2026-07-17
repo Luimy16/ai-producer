@@ -1,0 +1,15 @@
+# Secrets — NUNCA subir
+.openclaw-secrets/
+orquestador/.env
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db

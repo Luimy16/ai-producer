@@ -1,0 +1,46 @@
+# Stack completo GRATIS en un VPS (ej: Oracle Cloud Always Free)
+# Uso: docker compose up -d
+services:
+
+  db:
+    image: mariadb:11
+    restart: always
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wp
+      MYSQL_PASSWORD: ${DB_PASSWORD:-cambia-esto}
+      MYSQL_RANDOM_ROOT_PASSWORD: "1"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:6-apache
+    restart: always
+    depends_on: [db]
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-cambia-esto}
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_MEMORY_LIMIT', '512M');
+        define('WP_MAX_MEMORY_LIMIT', '512M');
+    volumes:
+      - wp_data:/var/www/html
+      - ./plugin/videoclip-creator:/var/www/html/wp-content/plugins/videoclip-creator:ro
+
+  orquestador:
+    build: ./orquestador
+    restart: always
+    env_file: ./orquestador/.env
+    ports:
+      - "8000:8000"   # público (api.tudominio.com): los workers de Colab se auto-registran aquí
+    volumes:
+      - datos_proyectos:/app/proyectos
+
+volumes:
+  db_data:
+  wp_data:
+  datos_proyectos:

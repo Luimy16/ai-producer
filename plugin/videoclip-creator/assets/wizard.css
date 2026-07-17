@@ -1,0 +1,62 @@
+/* VideoClip Creator IA — estilo oscuro cinematográfico */
+.vcc-app{--acc:#7c5cff;--acc2:#00e0a4;--bg:#0d0d14;--card:#181822;--txt:#eceaf5;--mut:#9a97ad;
+  background:var(--bg);color:var(--txt);border-radius:18px;padding:28px;max-width:960px;margin:0 auto;
+  font-family:system-ui,-apple-system,sans-serif}
+.vcc-app *{box-sizing:border-box}
+.vcc-app h2{margin:0 0 6px;font-size:1.5rem}
+.vcc-muted{color:var(--mut);margin:0 0 18px;font-size:.95rem}
+.vcc-label{display:block;margin:14px 0 6px;font-weight:600;font-size:.9rem}
+.vcc-app input[type=file],.vcc-app textarea,.vcc-app select{width:100%;background:#101018;border:1px solid #2c2c3a;
+  border-radius:10px;color:var(--txt);padding:12px;font-size:.95rem}
+.vcc-app textarea:focus,.vcc-app select:focus{outline:2px solid var(--acc);border-color:var(--acc)}
+
+/* pasos */
+.vcc-pasos{display:flex;gap:6px;list-style:none;padding:0;margin:0 0 26px;flex-wrap:wrap}
+.vcc-pasos li{flex:1;min-width:100px;text-align:center;padding:10px 6px;border-radius:10px;background:#14141c;
+  color:var(--mut);font-size:.82rem;font-weight:600;border:1px solid #23232f}
+.vcc-pasos li.activo{background:linear-gradient(135deg,var(--acc),#5a3ee6);color:#fff;border-color:transparent}
+.vcc-pasos li.hecho{background:#12352c;color:var(--acc2);border-color:#1d4d3f}
+
+/* secciones */
+.vcc-step{display:none;animation:vccFade .35s ease}
+.vcc-step.activo{display:block}
+@keyframes vccFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* botones */
+.vcc-btn{display:inline-block;margin-top:16px;background:linear-gradient(135deg,var(--acc),#5a3ee6);color:#fff;
+  border:0;border-radius:10px;padding:13px 26px;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s}
+.vcc-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,92,255,.35)}
+.vcc-btn:disabled{opacity:.55;cursor:wait}
+.vcc-btn-ok{background:linear-gradient(135deg,var(--acc2),#00b383);text-decoration:none}
+
+/* análisis */
+.vcc-analisis{margin-top:18px;background:#12352c;border:1px solid #1d4d3f;border-radius:10px;padding:14px;line-height:1.7}
+
+/* tarjetas de concepto */
+.vcc-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:18px}
+.vcc-card{background:var(--card);border:1px solid #26263a;border-radius:14px;padding:18px;cursor:pointer;transition:.2s}
+.vcc-card:hover{border-color:var(--acc);transform:translateY(-3px)}
+.vcc-card h3{margin:0 0 8px;color:var(--acc)}
+.vcc-card p{margin:0 0 8px;font-size:.92rem;line-height:1.5}
+.vcc-paleta{color:var(--mut);font-size:.85rem}
+
+/* personaje */
+.vcc-personaje{margin-top:16px}
+.vcc-personaje img{max-width:420px;width:100%;border-radius:12px;border:1px solid #2c2c3a}
+
+/* storyboard */
+.vcc-escena{background:var(--card);border:1px solid #26263a;border-radius:12px;padding:14px;margin-top:14px}
+.vcc-escena-head{font-size:.92rem;margin-bottom:8px;color:var(--mut)}
+.vcc-escena-head b{color:var(--txt)}
+.vcc-estado{float:right}
+.vcc-escena-media img,.vcc-escena-media video{width:100%;max-width:480px;border-radius:10px;margin-top:10px}
+
+/* progreso */
+.vcc-progreso{margin-top:20px}
+.vcc-barra{background:#1c1c28;border-radius:99px;height:14px;overflow:hidden}
+.vcc-barra-fill{height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .5s}
+
+/* final + errores */
+#vcc-final video{border-radius:12px;margin-top:16px}
+.vcc-error{margin-top:18px;background:#3d1620;border:1px solid #6b2135;color:#ffb3c0;padding:12px 16px;border-radius:10px}
+.vcc-login-aviso{background:#181822;border-radius:12px;padding:24px;text-align:center}

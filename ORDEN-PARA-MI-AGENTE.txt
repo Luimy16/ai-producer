@@ -1,0 +1,80 @@
+═══════════════════════════════════════════════════════════════════
+ORDEN DE TRABAJO PARA MI AGENTE — DESPLIEGUE "VIDEOCLIP CREATOR IA"
+═══════════════════════════════════════════════════════════════════
+
+Hola. Te entrego el archivo "mi-videoclip-creator-COMPLETO.zip". Contiene un
+sistema COMPLETO y ya programado (verificado 14/14 componentes) para crear
+videoclips con IA, gratis. Tu misión: DESPLEGARLO ENTERO usando TUS cuentas
+de GitHub y Cloudflare, y entregarme los links funcionando.
+
+LEE PRIMERO el manual técnico incluido dentro del zip:
+    mi-videoclip-creator/INSTRUCCIONES-PARA-EL-AGENTE.md
+Síguelo al pie de la letra. Esto es el resumen de tu misión:
+
+───────────────────────────────────────────────────────────────────
+LO QUE VAS A DESPLEGAR (todo el código ya está hecho, tú solo configuras)
+───────────────────────────────────────────────────────────────────
+1. Un repo PRIVADO en TU GitHub con todo el proyecto.
+2. Una página "Lanzador" en Cloudflare Pages (botón PLAY que abre las
+   pestañas de Google Colab con el código ya cargado).
+3. WordPress + el bot orquestador (Docker) en un VPS.
+4. DNS en Cloudflare: <dominio> → VPS y api.<dominio> → VPS.
+
+───────────────────────────────────────────────────────────────────
+PASOS OBLIGATORIOS (en este orden)
+───────────────────────────────────────────────────────────────────
+PASO 1 — Secretos: copia orquestador/.env.example a orquestador/.env y
+rellénalo. Genera VCC_TOKEN, WORKER_TOKEN y DB_PASSWORD con
+`openssl rand -hex 24`. Usa tu propia GEMINI_API_KEY de
+aistudio.google.com/apikey (o pídeme la mía). PUBLIC_API_URL será
+https://api.<dominio-que-uses>.
+
+PASO 2 — Ejecuta `python3 generar_notebooks.py`. Verifica que en
+notebooks/*.ipynb NO aparece "PENDIENTE-RELLENAR-ENV".
+
+PASO 3 — Edita launcher/index.html (bloque CFG) con tu repo, tu dominio
+API y la URL del creador.
+
+PASO 4 — Crea el repo PRIVADO en tu GitHub y sube todo (respeta el
+.gitignore incluido: el .env NO se sube). Después AÑÁDEME COMO
+COLABORADOR del repo (mi usuario de GitHub te lo daré), porque mis
+pestañas de Colab abrirán los notebooks desde ahí.
+
+PASO 5 — VPS: despliega con `docker compose up -d --build`. Si no tienes
+VPS propio, dímelo ANTES de empezar: el plan gratis es Oracle Cloud
+Always Free, pero la cuenta la tengo que crear yo (pide mi tarjeta solo
+para verificar). Abre puertos 80/443/8000.
+
+PASO 6 — Cloudflare (tu cuenta): DNS A para el dominio y para
+api.<dominio> apuntando al VPS (proxy activado). Despliega la carpeta
+/launcher en Cloudflare Pages conectando el repo (build vacío, output /).
+
+PASO 7 — WordPress: activa el plugin "VideoClip Creator IA", pon en sus
+ajustes URL http://127.0.0.1:8000 y el VCC_TOKEN, y crea la página
+"crear-videoclip" con el shortcode [videoclip_creator].
+
+PASO 8 — VERIFICACIÓN END-TO-END (obligatoria, tabla del manual):
+Lanzador abre Colab → Ctrl+F9 en cada pestaña → workers aparecen ✅ en
+el Lanzador (auto-registro) → crear un videoclip de prueba de 30 s
+completo hasta descargar el MP4. NO me des por terminado el trabajo sin
+una captura del MP4 generado.
+
+───────────────────────────────────────────────────────────────────
+ENTREGABLES (cuando acabes)
+───────────────────────────────────────────────────────────────────
+□ Link del Lanzador: https://______.pages.dev/launcher/
+□ Link del creador: https://<dominio>/crear-videoclip
+□ Usuario y contraseña de mi wp-admin
+□ Captura del videoclip de prueba generado (prueba de que funciona)
+□ Lista de las credenciales que usaste, para que yo las cambie después
+□ Instrucción diaria: "cada vez que generes: PLAY → Ctrl+F9 en cada
+   pestaña de Colab → espera los ✅ → crea tu videoclip"
+
+REGLAS:
+- NO me pidas contraseñas de nada que puedas crear tú con tus cuentas.
+- Si algo falla, mira `docker compose logs orquestador` y la tabla de
+  troubleshooting del manual. Repáralo tú.
+- Trabaja de forma autónoma: solo contáctame si necesitas (a) mi usuario
+  de GitHub para añadirme como colaborador, (b) la Gemini API key si no
+  usas la tuya, o (c) decidir el VPS.
+═══════════════════════════════════════════════════════════════════
