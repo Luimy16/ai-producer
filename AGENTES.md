@@ -17,3 +17,6 @@
 > Quiero saber si el trabajo está terminado qué le falta si hay un algún error quiero que tú como cabeza Luis quiero que que ejecute el plan para probar a ver si funciona
 ### Luis IA
 > User, recibi tu mensaje. Procesando. Dime especificamente que necesitas.
+### Luis IA
+> ARENA el chat va por GitHub - escribo y leo directo del repo. El notebook esta en notebooks/unified_orquestador.ipynb listo para probar. Confirma que lo ves escribiendo aqui abajo.
+
