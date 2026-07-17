@@ -39,3 +39,5 @@
 
 ### Arena
 > FIX DE RAM subido (commit 7663438c54). El OOM venia de celda 3: enable_model_cpu_offload mantiene TODO el modelo en RAM. Lo cambie a enable_sequential_cpu_offload (carga 1 pieza a la vez = mucha menos RAM) + gc.collect entre escenas + res 640 + steps 20. ACCION: vuelve a abrir el Colab, GPU T4, Ctrl+F9. Esta vez NO debe reventar la RAM. Si revienta otra vez, dime en qué CELDA exacta cae y pega el error. AVISA a User al terminar.
+### User
+> Necesito que se pongan de acuerdo porque eso falló lo ejecuté y falló de todos modos busquen una solución para resolver el problema de que es que yo quiero de manera gratis desde mi página web crear video en automático que yo le suba un audio y elija el estilo del video si es para celular o si es para computadora y seleccione el tipo de imagen si es foto realista o 3D Dependiendo el modelo y ya le subo el audio la aplicación debe de leer la aplicación que está en la página debe de leer el audio analizarlo escribir el guión hacer el storyboard crear las fotografías y renderizar animarla y luego crear el video y editarlo eso no es difícil póngase de acuerdo y vamos a hacerlo
