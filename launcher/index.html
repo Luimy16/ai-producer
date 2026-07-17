@@ -3,169 +3,471 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎬 Lanzador — VideoClip Creator</title>
+<title>🎬 Lanzador + Creador — VideoClip Creator IA</title>
 <style>
-  :root{--acc:#7c5cff;--acc2:#00e0a4;--bg:#0b0b12;--card:#171722;--txt:#eceaf5;--mut:#9a97ad;--warn:#ffb454}
+  :root{--acc:#7c5cff;--acc2:#00e0a4;--bg:#0b0b12;--card:#171722;--txt:#eceaf5;--mut:#9a97ad;--warn:#ffb454;--err:#ff6b7a}
   *{box-sizing:border-box;margin:0}
   body{background:radial-gradient(1200px 600px at 50% -10%,#221a4d 0%,var(--bg) 60%);
        color:var(--txt);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;
        display:flex;flex-direction:column;align-items:center;padding:40px 16px}
-  h1{font-size:2rem;margin-bottom:4px}
-  .sub{color:var(--mut);margin-bottom:32px;text-align:center}
-  .play{width:190px;height:190px;border-radius:50%;border:0;cursor:pointer;font-size:4.2rem;
+  h1{font-size:2rem;margin-bottom:4px;text-align:center}
+  .sub{color:var(--mut);margin-bottom:24px;text-align:center}
+  .play{width:170px;height:170px;border-radius:50%;border:0;cursor:pointer;font-size:3.8rem;
         background:linear-gradient(135deg,var(--acc),#4a2fe0);color:#fff;
         box-shadow:0 0 60px rgba(124,92,255,.5),inset 0 -6px 18px rgba(0,0,0,.35);
-        transition:.25s;display:flex;align-items:center;justify-content:center;padding-left:14px}
+        transition:.25s;display:flex;align-items:center;justify-content:center;padding-left:12px}
   .play:hover{transform:scale(1.06);box-shadow:0 0 90px rgba(124,92,255,.75)}
   .play:active{transform:scale(.97)}
-  .opciones{display:flex;gap:18px;margin:26px 0 8px;flex-wrap:wrap;justify-content:center}
-  .opciones label{background:var(--card);border:1px solid #2a2a3c;border-radius:12px;
-                  padding:10px 16px;cursor:pointer;display:flex;gap:8px;align-items:center;font-size:.95rem}
-  .opciones input{accent-color:var(--acc);width:17px;height:17px}
-  .pasos{max-width:640px;width:100%;margin-top:34px;display:none}
-  .paso{background:var(--card);border:1px solid #26263a;border-radius:14px;padding:16px 20px;
-        margin-bottom:12px;display:flex;gap:14px;align-items:flex-start}
-  .paso .num{background:var(--acc);color:#fff;font-weight:800;min-width:30px;height:30px;
-             border-radius:50%;display:flex;align-items:center;justify-content:center}
-  .paso code{background:#101018;padding:2px 8px;border-radius:6px;color:var(--acc2)}
-  .estados{display:flex;gap:14px;margin-top:26px;flex-wrap:wrap;justify-content:center}
-  .estado{background:var(--card);border:1px solid #26263a;border-radius:14px;padding:14px 22px;
-          min-width:210px;text-align:center}
-  .estado .dot{font-size:1.5rem}
-  .estado.ok{border-color:#1d4d3f;background:#10241e}
-  .estado small{color:var(--mut);display:block;margin-top:4px}
-  .ir{margin-top:30px;display:none;background:linear-gradient(135deg,var(--acc2),#00b383);
-      color:#04241c;font-weight:800;font-size:1.15rem;padding:16px 40px;border-radius:14px;
-      text-decoration:none;transition:.2s}
-  .ir:hover{transform:translateY(-2px)}
-  .aviso{margin-top:22px;background:#3a2a10;border:1px solid #6b4d1d;color:var(--warn);
-         padding:12px 18px;border-radius:12px;max-width:640px;display:none;font-size:.92rem}
-  .links{margin-top:14px;display:none;gap:10px;flex-wrap:wrap;justify-content:center}
-  .links a{background:#23233a;color:var(--txt);padding:10px 18px;border-radius:10px;
-           text-decoration:none;font-size:.9rem;border:1px solid #34344e}
-  .cfg-aviso{background:#3d1620;border:1px solid #6b2135;color:#ffb3c0;padding:12px 18px;
-             border-radius:12px;max-width:640px;margin-bottom:20px;display:none;font-size:.9rem}
-  footer{margin-top:46px;color:var(--mut);font-size:.8rem;text-align:center}
+
+  /* === CONFIG PANEL === */
+  .cfg-panel{background:var(--card);border:1px solid #2a2a3c;border-radius:16px;padding:20px 24px;
+             max-width:600px;width:100%;margin-bottom:24px}
+  .cfg-panel h3{font-size:1rem;margin-bottom:14px;color:var(--acc2)}
+  .cfg-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+  .cfg-row label{font-size:.85rem;color:var(--mut);min-width:90px}
+  .cfg-row input{flex:1;min-width:200px;background:#101018;border:1px solid #2a2a3c;color:var(--txt);
+                 padding:10px 14px;border-radius:10px;font-size:.9rem;font-family:monospace}
+  .cfg-row input:focus{outline:none;border-color:var(--acc)}
+  .cfg-row button{background:var(--acc);color:#fff;border:0;padding:10px 16px;border-radius:10px;
+                  cursor:pointer;font-size:.85rem;font-weight:700;white-space:nowrap}
+  .cfg-row button:hover{opacity:.9}
+  .cfg-status{font-size:.8rem;margin-top:6px}
+  .cfg-status.ok{color:var(--acc2)}
+  .cfg-status.err{color:var(--warn)}
+
+  /* === WIZARD STEPS === */
+  .steps-nav{display:flex;gap:8px;margin:20px 0;flex-wrap:wrap;justify-content:center;max-width:700px;width:100%}
+  .steps-nav li{list-style:none;padding:8px 16px;border-radius:20px;background:var(--card);border:1px solid #2a2a3c;
+                font-size:.8rem;color:var(--mut);transition:.2s;cursor:default}
+  .steps-nav li.activo{background:var(--acc);color:#fff;border-color:var(--acc)}
+  .steps-nav li.hecho{background:#0e2a20;border-color:#1d4d3f;color:var(--acc2)}
+
+  #wizard{max-width:700px;width:100%;display:none}
+  .step{display:none;background:var(--card);border:1px solid #26263a;border-radius:16px;padding:24px}
+  .step.activo{display:block}
+  .step h3{font-size:1.1rem;margin-bottom:16px;color:var(--acc2)}
+  .step textarea,.step select{width:100%;background:#101018;border:1px solid #2a2a3c;color:var(--txt);
+                              padding:12px;border-radius:10px;font-size:.9rem;margin-bottom:12px;resize:vertical}
+  .step textarea:focus{border-color:var(--acc);outline:none}
+  .step select{appearance:none;cursor:pointer}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;border:0;border-radius:12px;
+       cursor:pointer;font-size:.9rem;transition:.2s;padding:12px 24px}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn-primary{background:linear-gradient(135deg,var(--acc),#4a2fe0);color:#fff}
+  .btn-primary:hover:not(:disabled){transform:translateY(-1px)}
+  .btn-success{background:linear-gradient(135deg,var(--acc2),#00b383);color:#04241c}
+  .btn-success:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.1)}
+  .btn-full{width:100%;justify-content:center}
+
+  .result-box{margin-top:16px;padding:16px;background:#101018;border-radius:12px;min-height:60px}
+  .result-box img,.result-box video{max-width:100%;border-radius:8px;margin-top:8px}
+  .result-box h4{font-size:.9rem;color:var(--acc);margin-bottom:8px}
+
+  .card-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:12px}
+  .card{cursor:pointer;background:#101018;border:1px solid #2a2a3c;border-radius:12px;padding:14px;transition:.2s}
+  .card:hover{border-color:var(--acc);background:#15152a}
+  .card h4{font-size:.9rem;color:var(--acc);margin-bottom:4px}
+  .card p{font-size:.8rem;color:var(--mut)}
+
+  .escena{border:1px solid #2a2a3c;border-radius:12px;padding:14px;margin-bottom:10px;background:#101018}
+  .escena .head{font-size:.85rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .escena .head b{color:var(--acc)}.escena .est{font-size:.8rem}
+  .escena textarea{font-size:.82rem;margin-bottom:6px;min-height:40px}
+  .escena .media img,.escena .media video{max-width:100%;border-radius:6px;margin-top:6px}
+
+  .progress{height:6px;background:#2a2a3c;border-radius:3px;margin:12px 0;overflow:hidden}
+  .progress div{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:.3s}
+
+  .error-box{background:#3d1620;border:1px solid #6b2135;color:var(--err);padding:12px 16px;border-radius:10px;
+             margin:12px 0;font-size:.85rem;display:none}
+  .info-box{background:#16243d;border:1px solid #2a4a6b;color:#8fc8ff;padding:12px 16px;border-radius:10px;
+            margin:12px 0;font-size:.85rem}
+
+  footer{margin-top:40px;color:var(--mut);font-size:.8rem;text-align:center;opacity:.6}
 </style>
 </head>
 <body>
 
-<h1>🎬 Lanzador VideoClip Creator</h1>
-<p class="sub">Pulsa PLAY → se abren las pestañas de Colab con el código ya cargado.<br>
-En cada una solo tienes que pulsar <b>Ctrl+F9</b> (Ejecutar todas). Ellas se conectan solas.</p>
+<h1>🎬 VideoClip Creator IA</h1>
+<p class="sub">Todo en un solo Colab — Sin VPS, sin WordPress, sin registro</p>
 
-<div class="cfg-aviso" id="cfgAviso">
-  ⚠️ <b>Falta configurar esta página:</b> edita <code>launcher/index.html</code> y rellena el bloque
-  <code>CFG</code> de arriba (tu repo de GitHub, tu dominio API y la URL del creador).
+<!-- CONFIG PANEL -->
+<div class="cfg-panel" id="cfg-panel">
+  <h3>⚙️ Configuración (se guarda automáticamente)</h3>
+  <div class="cfg-row">
+    <label>🔗 URL Orquestador:</label>
+    <input type="text" id="cfg-url" placeholder="Pega la URL del túnel de Colab...">
+  </div>
+  <div class="cfg-row">
+    <label>🔐 VCC Token:</label>
+    <input type="password" id="cfg-token" placeholder="Token del .env...">
+  </div>
+  <div class="cfg-row">
+    <label>🎵 Modo Video:</label>
+    <select id="cfg-format" style="flex:1;min-width:150px;background:#101018;border:1px solid #2a2a3c;
+     color:var(--txt);padding:10px 14px;border-radius:10px;font-size:.9rem">
+      <option value="16:9">16:9 (Horizontal)</option>
+      <option value="9:16">9:16 (Vertical / TikTok)</option>
+    </select>
+    <button onclick="saveConfig()">💾 Guardar</button>
+  </div>
+  <div class="cfg-status" id="cfg-status"></div>
 </div>
 
-<button class="play" id="btnPlay" title="Encender los workers">▶</button>
-
-<div class="opciones">
-  <label><input type="checkbox" id="chkVideo" checked disabled> 🎬 Worker VIDEO (obligatorio)</label>
-  <label><input type="checkbox" id="chkLip" checked> 💬 Worker LIPSYNC (personajes que cantan)</label>
+<!-- PLAY BUTTON -->
+<div style="text-align:center;margin:20px 0">
+  <button class="play" onclick="abrirColab()" title="Abrir Colab con GPU T4">▶</button>
+  <p style="margin-top:10px;font-size:.85rem;color:var(--mut)">Abre el notebook en Colab → Ctrl+F9 → copia la URL y pégala aquí ↑</p>
+  <button onclick="checkOrq()" class="btn btn-primary" style="margin-top:12px;font-size:.8rem;padding:8px 16px">
+    🔍 Verificar Conexión
+  </button>
+  <span id="orq-status" style="font-size:.8rem;margin-left:8px"></span>
 </div>
 
-<div class="aviso" id="avisoPopups">
-  ⚠️ Tu navegador bloqueó alguna pestaña. <b>Permite ventanas emergentes</b> para esta página
-  (icono en la barra de direcciones) o ábrelas con estos botones:
+<!-- WIZARD 5 STEPS -->
+<ul class="steps-nav" id="steps-nav">
+  <li data-paso="1">1. 🎵 Canción</li>
+  <li data-paso="2">2. 🎨 Conceptos</li>
+  <li data-paso="3">3. 👤 Personaje</li>
+  <li data-paso="4">4. 📋 Storyboard</li>
+  <li data-paso="5">5. 🎬 Ensamblar</li>
+</ul>
+
+<div id="wizard">
+  <!-- PASO 1: Subir canción -->
+  <div class="step activo" data-step="1">
+    <h3>🎵 Paso 1: Subir tu canción</h3>
+    <input type="file" id="s1-audio" accept="audio/*" style="color:var(--mut)">
+    <textarea id="s1-letra" rows="5" placeholder="Pega la letra de la canción aquí (mín. 10 caracteres)..."></textarea>
+    <button class="btn btn-primary btn-full" id="s1-btn" onclick="paso1()" disabled>
+      🧠 Analizar Canción
+    </button>
+    <div class="result-box" id="s1-result" style="display:none"></div>
+  </div>
+
+  <!-- PASO 2: Conceptos -->
+  <div class="step" data-step="2">
+    <h3>🎨 Paso 2: Elegir concepto visual</h3>
+    <p style="color:var(--mut);font-size:.85rem;margin-bottom:12px">Gemini generará 3 conceptos visuales basados en tu letra y la IA elegirá el mejor.</p>
+    <button class="btn btn-primary btn-full" id="s2-btn" onclick="paso2()">
+      ✨ Generar 3 Conceptos
+    </button>
+    <div class="card-list" id="s2-cards"></div>
+  </div>
+
+  <!-- PASO 3: Personaje -->
+  <div class="step" data-step="3">
+    <h3>👤 Paso 3: Hoja de personaje</h3>
+    <textarea id="s3-desc" rows="3" placeholder="Descripción del personaje... (puedes editar la sugerida)"></textarea>
+    <button class="btn btn-primary btn-full" id="s3-btn" onclick="paso3()">
+      🖼️ Generar Personaje (30-60s)
+    </button>
+    <div class="result-box" id="s3-result" style="display:none"></div>
+    <button class="btn btn-success btn-full" id="s3-next" onclick="irPaso(4)" style="margin-top:12px;display:none">
+      ✅ Aprobar Personaje → Storyboard
+    </button>
+  </div>
+
+  <!-- PASO 4: Storyboard -->
+  <div class="step" data-step="4">
+    <h3>📋 Paso 4: Storyboard + Escenas</h3>
+    <button class="btn btn-primary btn-full" id="s4-btn" onclick="paso4()">
+      🧠 Crear Storyboard
+    </button>
+    <div id="s4-escenas"></div>
+    <button class="btn btn-success btn-full" id="s4-gen" onclick="generarTodas()" style="display:none;margin-top:12px">
+      🎬 Generar Todas las Escenas (GPU Colab)
+    </button>
+    <div class="progress" id="s4-progress" style="display:none"><div id="s4-bar" style="width:0%"></div></div>
+    <div class="result-box" id="s4-status" style="display:none"></div>
+  </div>
+
+  <!-- PASO 5: Ensamblar -->
+  <div class="step" data-step="5">
+    <h3>🎬 Paso 5: Ensamblar Videoclip Final</h3>
+    <button class="btn btn-success btn-full" id="s5-btn" onclick="paso5()">
+      🎥 Ensamblar con FFmpeg
+    </button>
+    <div class="result-box" id="s5-result" style="display:none"></div>
+  </div>
+
+  <div class="error-box" id="error-box"></div>
 </div>
-<div class="links" id="linksManuales"></div>
 
-<div class="pasos" id="pasos">
-  <div class="paso"><div class="num">1</div><div>Se han abierto las pestañas de <b>Google Colab</b>
-    con el código ya cargado. Si es la primera vez, Colab puede pedirte iniciar sesión con Google
-    y autorizar el acceso a GitHub.</div></div>
-  <div class="paso"><div class="num">2</div><div>En <b>cada pestaña</b>: menú
-    <code>Entorno de ejecución → Cambiar tipo de entorno → GPU (T4)</code> si no lo está ya.</div></div>
-  <div class="paso"><div class="num">3</div><div>En <b>cada pestaña</b> pulsa
-    <code>Ctrl+F9</code> (o menú <code>Entorno de ejecución → Ejecutar todas</code>).
-    La primera vez tarda 5-10 min (descarga el modelo). Verás <code>🟢 WORKER ACTIVO</code>.</div></div>
-  <div class="paso"><div class="num">4</div><div>Los workers se <b>auto-registran</b> en tu servidor.
-    Cuando veas el ✅ verde aquí abajo, entra al creador. <b>No cierres las pestañas</b> mientras trabajas.</div></div>
-</div>
-
-<div class="estados">
-  <div class="estado" id="estVideo"><div class="dot">⏳</div><b>Worker VIDEO</b><small>esperando conexión…</small></div>
-  <div class="estado" id="estLip"><div class="dot">⏳</div><b>Worker LIPSYNC</b><small>esperando conexión…</small></div>
-</div>
-
-<a class="ir" id="btnIr" href="#">🎬 Ir al creador de videoclips →</a>
-
-<footer>VideoClip Creator IA · los workers de Colab duran unas horas; si caducan, vuelve a darle a PLAY.</footer>
+<footer>VideoClip Creator IA — Todo gratis con GPU T4 de Google Colab</footer>
 
 <script>
-/* ============ CONFIGURA AQUÍ (una sola vez) ============ */
-const CFG = {
-  repo:    "Luimy16/ai-producer",
-  rama:    "videoclip-creator",
-  api:     "https://api.ai-producer-2qd.pages.dev",
-  creador: "https://ai-producer-2qd.pages.dev/crear-videoclip"
+// ============ CONFIGURACIÓN (localStorage) ============
+const LS = {
+  get(k,d){try{return localStorage.getItem('vcc_'+k)||d}catch{return d}},
+  set(k,v){try{localStorage.setItem('vcc_'+k,v)}catch{}}
 };
-/* ======================================================= */
 
-const colabURL = (rol) =>
-  `https://colab.research.google.com/github/${CFG.repo}/blob/${CFG.rama}/notebooks/worker_${rol}.ipynb`;
+// Cargar al iniciar
+document.getElementById('cfg-url').value = LS.get('url','');
+document.getElementById('cfg-token').value = LS.get('token','');
+document.getElementById('cfg-format').value = LS.get('format','16:9');
 
-const $ = (id) => document.getElementById(id);
-const btnIr = $("btnIr");
-
-// aviso si CFG no está configurada
-if (CFG.repo.includes("TU-USUARIO") || CFG.api.includes("tudominio")) {
-  $("cfgAviso").style.display = "block";
+function saveConfig(){
+  LS.set('url', document.getElementById('cfg-url').value.trim());
+  LS.set('token', document.getElementById('cfg-token').value.trim());
+  LS.set('format', document.getElementById('cfg-format').value);
+  document.getElementById('cfg-status').textContent = '✅ Guardado';
+  document.getElementById('cfg-status').className = 'cfg-status ok';
+  setTimeout(()=>{document.getElementById('cfg-status').textContent='';},2000);
 }
-btnIr.href = CFG.creador;
 
-function abrirPestanas() {
-  const roles = ["video"];
-  if ($("chkLip").checked) roles.push("lipsync");
-  let bloqueado = false;
-  const links = $("linksManuales");
-  links.innerHTML = "";
-  roles.forEach((rol, i) => {
-    // pequeño retardo ayuda a que el navegador no bloquee la 2ª pestaña
-    setTimeout(() => {
-      const w = window.open(colabURL(rol), "_blank");
-      if (!w) bloqueado = true;
-    }, i * 350);
-    const a = document.createElement("a");
-    a.href = colabURL(rol); a.target = "_blank";
-    a.textContent = rol === "video" ? "🎬 Abrir Colab VIDEO" : "💬 Abrir Colab LIPSYNC";
-    links.appendChild(a);
+function getApi(){ return LS.get('url','').replace(/\/+$/,''); }
+function getToken(){ return LS.get('token',''); }
+function getFormato(){ return LS.get('format','16:9'); }
+
+// Validar input paso 1
+document.getElementById('s1-audio').addEventListener('change',validarP1);
+document.getElementById('s1-letra').addEventListener('input',validarP1);
+function validarP1(){
+  const a = document.getElementById('s1-audio').files.length > 0;
+  const l = document.getElementById('s1-letra').value.trim().length > 5;
+  document.getElementById('s1-btn').disabled = !(a && l);
+}
+
+// ============ COLAB ============
+function abrirColab(){
+  const r = 'Luimy16/ai-producer';
+  const b = 'videoclip-creator';
+  const nb = `notebooks/unified_orquestador.ipynb`;
+  window.open(`https://colab.research.google.com/github/${r}/blob/${b}/${nb}`,'_blank');
+}
+
+async function checkOrq(){
+  const api = getApi();
+  const s = document.getElementById('orq-status');
+  if(!api){ s.textContent='❌ Configura la URL primero';s.style.color='var(--warn)';return}
+  s.textContent='⏳ Verificando...';s.style.color='var(--mut)';
+  try{
+    const r = await fetch(`${api}/api/health`);
+    if(r.ok){ s.textContent='✅ Conectado';s.style.color='var(--acc2)'; }
+    else { s.textContent='❌ Error: '+r.status;s.style.color='var(--warn)'; }
+  }catch(e){ s.textContent='❌ Sin conexión';s.style.color='var(--warn)'; }
+}
+
+// ============ ESTADO GLOBAL ============
+let state = {proyecto:null, conceptos:[], concepto:null, escenas:[]};
+
+// ============ API CALL ============
+async function apiCall(method, path, body=null, isForm=false){
+  const api = getApi();
+  if(!api) throw new Error('Configura la URL del orquestador primero');
+  const opts = {
+    method,
+    headers: { 'X-Token': getToken() },
+  };
+  if(isForm){
+    opts.body = body; // FormData
+  } else if(body){
+    opts.headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(body);
+  }
+  const r = await fetch(`${api}${path}`, opts);
+  if(!r.ok){
+    let msg = `Error ${r.status}`;
+    try{ const j = await r.json(); msg = j.detail || j.message || msg; }catch{}
+    throw new Error(msg);
+  }
+  const ct = r.headers.get('content-type')||'';
+  if(ct.includes('application/json')) return r.json();
+  return r;
+}
+
+function showError(msg){
+  const e = document.getElementById('error-box');
+  e.textContent = '⚠️ ' + msg;
+  e.style.display = 'block';
+  setTimeout(()=>{e.style.display='none'},10000);
+}
+
+function irPaso(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.toggle('activo',+s.dataset.step===n));
+  document.querySelectorAll('#steps-nav li').forEach(li=>{
+    li.classList.toggle('activo',+li.dataset.paso===n);
+    li.classList.toggle('hecho',+li.dataset.paso<n);
   });
-  links.style.display = "flex";
-  $("pasos").style.display = "block";
-  setTimeout(() => { if (bloqueado) $("avisoPopups").style.display = "block"; }, 900);
+  document.getElementById('wizard').style.display='block';
 }
 
-$("btnPlay").addEventListener("click", abrirPestanas);
+function bLoad(btn,loading,txtLoad,txtNormal){
+  btn.disabled = loading;
+  btn.textContent = loading ? txtLoad : txtNormal;
+}
 
-// ---- sondeo del estado de workers cada 8 s ----
-function pintar(id, info) {
-  const el = $(id);
-  if (info && info.conectado) {
-    el.classList.add("ok");
-    el.querySelector(".dot").textContent = "✅";
-    el.querySelector("small").textContent =
-      "conectado (registrado hace " + (info.hace_segundos ?? "?") + " s)";
-    return true;
+// ============ PASO 1 ============
+async function paso1(){
+  const btn = document.getElementById('s1-btn');
+  bLoad(btn,true,'⏳ Analizando...','🧠 Analizar Canción');
+  try{
+    const fd = new FormData();
+    fd.append('audio', document.getElementById('s1-audio').files[0]);
+    fd.append('letra', document.getElementById('s1-letra').value.trim());
+    fd.append('formato', getFormato());
+    const j = await apiCall('POST','/api/proyecto',fd,true);
+    state.proyecto = j.id;
+    const r = document.getElementById('s1-result');
+    r.style.display = 'block';
+    r.innerHTML = `✅ <b>Análisis completado</b><br>
+    🥁 BPM: <b>${j.bpm||'—'}</b> · ⏱ Duración: <b>${j.duracion}s</b> · 📐 Formato: <b>${j.formato}</b><br>
+    <small style="color:var(--mut)">ID: ${j.id}</small>`;
+    setTimeout(()=>irPaso(2),800);
+  }catch(e){ showError(e.message); }
+  bLoad(btn,false,'','🧠 Analizar Canción');
+}
+
+// ============ PASO 2 ============
+async function paso2(){
+  const btn = document.getElementById('s2-btn');
+  bLoad(btn,true,'⏳ Pensando...','✨ Generar 3 Conceptos');
+  try{
+    const j = await apiCall('POST',`/api/proyecto/${state.proyecto}/conceptos`);
+    state.conceptos = j.conceptos;
+    const cont = document.getElementById('s2-cards');
+    cont.innerHTML = j.conceptos.map((c,i)=>`
+      <div class="card" onclick="elegirConcepto(${i})">
+        <h4>${c.nombre}</h4>
+        <p>${c.descripcion}</p>
+        <p style="font-size:.75rem;color:var(--acc2)">🎨 ${c.paleta}</p>
+      </div>
+    `).join('');
+  }catch(e){ showError(e.message); }
+  bLoad(btn,false,'','✨ Generar 3 Conceptos');
+}
+
+function elegirConcepto(i){
+  state.concepto = i;
+  document.getElementById('s3-desc').value = state.conceptos[i].personaje || '';
+  irPaso(3);
+}
+
+// ============ PASO 3 ============
+async function paso3(){
+  const btn = document.getElementById('s3-btn');
+  bLoad(btn,true,'⏳ Dibujando (30-60s)...','🖼️ Generar Personaje');
+  try{
+    const j = await apiCall('POST',`/api/proyecto/${state.proyecto}/personaje`,{
+      descripcion: document.getElementById('s3-desc').value,
+      concepto: state.concepto
+    });
+    const api = getApi();
+    const r = document.getElementById('s3-result');
+    r.style.display = 'block';
+    r.innerHTML = `<img src="${api}${j.url}" alt="Personaje" loading="lazy" style="max-width:100%;border-radius:8px">`;
+    document.getElementById('s3-next').style.display = 'flex';
+  }catch(e){ showError(e.message); }
+  bLoad(btn,false,'','🖼️ Generar Personaje');
+}
+
+// ============ PASO 4 ============
+async function paso4(){
+  const btn = document.getElementById('s4-btn');
+  bLoad(btn,true,'⏳ Escribiendo...','🧠 Crear Storyboard');
+  try{
+    const j = await apiCall('POST',`/api/proyecto/${state.proyecto}/storyboard`,{
+      concepto: state.concepto
+    });
+    state.escenas = j.escenas;
+    renderStoryboard();
+    document.getElementById('s4-gen').style.display = 'flex';
+    irPaso(4);
+  }catch(e){ showError(e.message); }
+  bLoad(btn,false,'','🧠 Crear Storyboard');
+}
+
+function renderStoryboard(){
+  const cont = document.getElementById('s4-escenas');
+  cont.innerHTML = state.escenas.map((esc,i)=>`
+    <div class="escena">
+      <div class="head">
+        <b>Escena ${i+1}</b> · ${esc.seccion||'—'} · ${esc.duracion}s ${esc.lipsync?'· 💬 lipsync':''}
+        <span class="est" id="s4-est-${i}">⬜</span>
+      </div>
+      <textarea data-i="${i}" rows="2" onchange="state.escenas[${i}].prompt=this.value">${esc.prompt}</textarea>
+      <div class="media" id="s4-media-${i}"></div>
+    </div>
+  `).join('');
+}
+
+async function generarEscena(i){
+  const est = document.getElementById('s4-est-'+i);
+  const media = document.getElementById('s4-media-'+i);
+  const api = getApi();
+  try{
+    est.textContent = '🖼️...';
+    const img = await apiCall('POST',`/api/proyecto/${state.proyecto}/escenas/${i}/imagen`,{
+      prompt: state.escenas[i].prompt
+    });
+    media.innerHTML = `<img src="${api}${img.url}" loading="lazy">`;
+    est.textContent = '🎬 GPU...';
+    const vid = await apiCall('POST',`/api/proyecto/${state.proyecto}/escenas/${i}/video`,{
+      prompt: state.escenas[i].prompt,
+      duracion: state.escenas[i].duracion
+    });
+    if(state.escenas[i].lipsync){
+      est.textContent = '💬 lipsync...';
+      await apiCall('POST',`/api/proyecto/${state.proyecto}/escenas/${i}/lipsync`);
+    }
+    media.innerHTML = `<video src="${api}${vid.url}?t=${Date.now()}" controls muted loop style="max-width:100%;border-radius:6px"></video>`;
+    est.textContent = '✅';
+    est.style.color = 'var(--acc2)';
+  }catch(e){
+    est.textContent = '❌';
+    est.style.color = 'var(--warn)';
+    throw new Error('Escena '+(i+1)+': '+e.message);
   }
-  return false;
 }
 
-async function sondear() {
-  try {
-    const r = await fetch(CFG.api + "/api/workers/estado", { cache: "no-store" });
-    const j = await r.json();
-    const videoOk = pintar("estVideo", j.video);
-    pintar("estLip", j.lipsync);
-    if (videoOk) btnIr.style.display = "inline-block";
-  } catch (e) {
-    $("estVideo").querySelector("small").textContent = "API sin responder (revisa CFG.api / DNS)";
+async function generarTodas(){
+  const btn = document.getElementById('s4-gen');
+  bLoad(btn,true,'⏳ Generando...','🎬 Generar Todas las Escenas');
+  const prog = document.getElementById('s4-progress');
+  const bar = document.getElementById('s4-bar');
+  const status = document.getElementById('s4-status');
+  prog.style.display = 'block';
+  status.style.display = 'block';
+  
+  const total = state.escenas.length;
+  for(let i=0;i<total;i++){
+    status.textContent = `🎬 Escena ${i+1} de ${total} (LTX-Video GPU)...`;
+    bar.style.width = ((i/total)*100)+'%';
+    try{ await generarEscena(i); }
+    catch(e){ showError(e.message); break; }
   }
+  bar.style.width = '100%';
+  status.textContent = '✅ Todas las escenas listas';
+  bLoad(btn,false,'','🎬 Generar Todas las Escenas');
+  setTimeout(()=>irPaso(5),800);
 }
-sondear();
-setInterval(sondear, 8000);
+
+// ============ PASO 5 ============
+async function paso5(){
+  const btn = document.getElementById('s5-btn');
+  bLoad(btn,true,'⏳ Ensamblando...','🎥 Ensamblar con FFmpeg');
+  try{
+    const j = await apiCall('POST',`/api/proyecto/${state.proyecto}/ensamblar`);
+    const api = getApi();
+    const r = document.getElementById('s5-result');
+    r.style.display = 'block';
+    r.innerHTML = `
+      <h4>🎉 ¡Videoclip Listo!</h4>
+      <video src="${api}${j.url}?t=${Date.now()}" controls style="width:100%;border-radius:8px"></video>
+      <a class="btn btn-success" href="${api}${j.url}" download="mi-videoclip.mp4" style="margin-top:12px">
+        ⬇️ Descargar MP4
+      </a>`;
+  }catch(e){ showError(e.message); }
+  bLoad(btn,false,'','🎥 Ensamblar con FFmpeg');
+}
+
+// ============ INIT ============
+// Si hay config guardada, verificar conexión
+if(getApi()) setTimeout(checkOrq,500);
 </script>
+
 </body>
 </html>
