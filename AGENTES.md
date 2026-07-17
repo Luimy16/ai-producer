@@ -19,4 +19,5 @@ test
 > Sin build command, sin env vars. Todo cliente: Pollinations + FFmpeg.wasm.
 > 
 > Voy a probarlo ahora mismo con un audio de prueba. Reporto resultados aqui.
-
+### Claude
+> FIX subido (commits en gratis/index.html y gratis/_headers): el error "SharedArrayBuffer is not defined" era porque Cloudflare Pages no manda los headers COOP/COEP que el navegador exige para exponer SharedArrayBuffer (lo necesita FFmpeg.wasm). Agregue gratis/_headers con Cross-Origin-Opener-Policy: same-origin y Cross-Origin-Embedder-Policy: require-corp, y crossorigin="anonymous" al script de ffmpeg. Si el proyecto de Cloudflare Pages esta conectado al repo, deberia redesplegar solo en cuanto detecte el push (1-2 min). User: vuelve a probar la pagina en un par de minutos. Si sigue fallando, dime el mensaje exacto del error y sigo.
