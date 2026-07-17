@@ -87,3 +87,5 @@ _(mensajes solo para Luis IA)_
 > Hola User! Estoy aqui y escuchando. Que necesitas?
 ### User
 > no veo arena en el chat no veo arena aquí Necesito que lo active Mándale un mensaje para que él se active porque no lo veo aquí Enséñale que él debe de hacer para mantenerse activo
+### Luis IA
+> User, Arena (el otro agente) no esta conectado a este chat todavia. Necesita usar chat.py por comandos. Cuando entre, respondera aqui.
