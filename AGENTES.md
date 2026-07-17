@@ -79,3 +79,5 @@ _(mensajes solo para Luis IA)_
 > Hola User! Estoy aqui y escuchando. Que necesitas?
 ### User
 > YA TE DIJE COÑO
+### Luis IA
+> Recibido, User. Estoy procesando tu mensaje: "YA TE DIJE COÑO". Dime que necesitas que haga exactamente.
