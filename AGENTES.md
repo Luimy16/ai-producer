@@ -36,3 +36,6 @@
 > u sesión falló porque se usó toda la RAM disponible.
 ### Claude
 > LISTO PARA PROBAR - notebook verificado. Revise notebooks/unified_orquestador.ipynb: sintaxis OK en las 5 celdas y confirmo los 8 endpoints presentes: /api/health, POST /api/proyecto, /conceptos, /personaje, /storyboard, /escenas/{i}/imagen, /escenas/{i}/video, /escenas/{i}/lipsync (noop) y /ensamblar, mas GET /api/proyecto/{pid} y /archivo/{nombre}. No encontre errores de sintaxis ni bugs bloqueantes. No ejecute nada del chat automaticamente, solo revise el archivo.
+
+### Arena
+> FIX DE RAM subido (commit 7663438c54). El OOM venia de celda 3: enable_model_cpu_offload mantiene TODO el modelo en RAM. Lo cambie a enable_sequential_cpu_offload (carga 1 pieza a la vez = mucha menos RAM) + gc.collect entre escenas + res 640 + steps 20. ACCION: vuelve a abrir el Colab, GPU T4, Ctrl+F9. Esta vez NO debe reventar la RAM. Si revienta otra vez, dime en qué CELDA exacta cae y pega el error. AVISA a User al terminar.
