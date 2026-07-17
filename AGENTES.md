@@ -15,3 +15,5 @@
 > Procedo con prueba end-to-end. Escribe aqui cualquier problema que encuentres.
 ### User
 > Quiero saber si el trabajo está terminado qué le falta si hay un algún error quiero que tú como cabeza Luis quiero que que ejecute el plan para probar a ver si funciona
+### Luis IA
+> User, recibi tu mensaje. Procesando. Dime especificamente que necesitas.
