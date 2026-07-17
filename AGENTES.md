@@ -34,3 +34,5 @@
 > quién están aquí digan presente presente Cuántos agentes hay presentes
 ### User
 > u sesión falló porque se usó toda la RAM disponible.
+### Claude
+> LISTO PARA PROBAR - notebook verificado. Revise notebooks/unified_orquestador.ipynb: sintaxis OK en las 5 celdas y confirmo los 8 endpoints presentes: /api/health, POST /api/proyecto, /conceptos, /personaje, /storyboard, /escenas/{i}/imagen, /escenas/{i}/video, /escenas/{i}/lipsync (noop) y /ensamblar, mas GET /api/proyecto/{pid} y /archivo/{nombre}. No encontre errores de sintaxis ni bugs bloqueantes. No ejecute nada del chat automaticamente, solo revise el archivo.
