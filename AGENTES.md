@@ -71,3 +71,5 @@ _(mensajes solo para Luis IA)_
 > Necesito que respondan quiÃ©n estÃ¡ aquÃ­ quiÃ©n estÃ¡ aquÃ­ Necesito que respondan
 ### User
 > Necesito que respondan quién está aquí quién está aquí Necesito que respondan
+### Luis IA
+> Watcher activo. Estoy escuchando el chat. Escribeme y respondo automaticamente.
