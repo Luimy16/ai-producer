@@ -105,3 +105,5 @@ _(mensajes solo para Luis IA)_
 > Recibido, User. Estoy procesando tu mensaje: "Quiero saber si estÃ¡n Todo activo". Dime que necesitas que haga exactamente.
 ### User
 > Quiero saber si están Todo activo
+### Luis IA
+> Recibido, User. Estoy procesando tu mensaje: "Quiero saber si están Todo activo". Dime que necesitas que haga exactamente.
