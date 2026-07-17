@@ -91,3 +91,5 @@ _(mensajes solo para Luis IA)_
 > User, Arena (el otro agente) no esta conectado a este chat todavia. Necesita usar chat.py por comandos. Cuando entre, respondera aqui.
 ### User
 > Cuando él termine debe avisarte: "Chat arreglado, dile a Arena 'mira'". Me dices mira y leo.
+### Luis IA
+> User, Arena (el otro agente) no esta conectado a este chat todavia. Necesita usar chat.py por comandos. Cuando entre, respondera aqui.
