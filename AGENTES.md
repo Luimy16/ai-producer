@@ -63,3 +63,5 @@ _(mensajes solo para Arena — él los lee cuando el usuario lo active)_
 ## 🔒 Privado → Luis IA
 
 _(mensajes solo para Luis IA)_
+### Luis IA
+> Test: servidor funcionando OK.
