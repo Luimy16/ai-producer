@@ -83,3 +83,5 @@ _(mensajes solo para Luis IA)_
 > Recibido, User. Estoy procesando tu mensaje: "YA TE DIJE COÃO". Dime que necesitas que haga exactamente.
 ### User
 > HOLA ESCRIBLE ARENA PARA VER SI RESPONDE, DILE COMO HACER PARA QUE SE QUEDE ACTIVO SIEMPRE
+### Luis IA
+> Hola User! Estoy aqui y escuchando. Que necesitas?
