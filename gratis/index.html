@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VideoClip Creator IA — Versión 100% Gratis</title>
+<style>
+  :root{
+    --bg:#0b0d12; --panel:#151822; --border:#262b3a; --text:#e8eaf0; --muted:#9aa1b2;
+    --accent:#7c5cff; --accent2:#22d3ee; --good:#3ddc84; --bad:#ff5c7a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:24px}
+  .wrap{max-width:760px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  p.sub{color:var(--muted);margin:0 0 24px;font-size:14px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+  label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px}
+  label:first-child{margin-top:0}
+  input[type=file], textarea, select{
+    width:100%;background:#0f1117;border:1px solid var(--border);border-radius:8px;
+    color:var(--text);padding:10px 12px;font-size:14px;font-family:inherit
+  }
+  textarea{min-height:90px;resize:vertical}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  button{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;
+    font-weight:600;font-size:15px;padding:13px 18px;border-radius:10px;cursor:pointer;width:100%;margin-top:18px
+  }
+  button:disabled{opacity:.5;cursor:not-allowed}
+  #log{background:#0a0b10;border:1px solid var(--border);border-radius:10px;padding:12px;
+       font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:var(--muted);
+       max-height:260px;overflow-y:auto;white-space:pre-wrap;margin-top:14px}
+  #log .ok{color:var(--good)} #log .err{color:var(--bad)} #log .step{color:var(--accent2)}
+  .bar{height:6px;background:#0a0b10;border-radius:4px;overflow:hidden;margin-top:10px;border:1px solid var(--border)}
+  .bar > div{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+  video{width:100%;border-radius:10px;margin-top:14px;background:#000}
+  a.dl{display:inline-block;margin-top:10px;color:var(--accent2);text-decoration:none;font-weight:600}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎬 VideoClip Creator IA — 100% Gratis</h1>
+  <p class="sub">Todo corre en tu navegador: guion + imágenes por IA gratis (Pollinations) y montaje de video (FFmpeg.wasm). Sin servidor, sin GPU, sin Colab.</p>
+
+  <div class="card">
+    <label>1. Sube tu canción (mp3/wav)</label>
+    <input type="file" id="audio" accept="audio/*">
+
+    <label>2. Letra o descripción de la canción</label>
+    <textarea id="letra" placeholder="Pega aquí la letra completa, o si no la tienes, describe de qué trata la canción..."></textarea>
+
+    <div class="row">
+      <div>
+        <label>3. Estilo visual</label>
+        <select id="estilo">
+          <option value="photorealistic cinematic, natural lighting, 35mm film">Fotorrealista</option>
+          <option value="anime style, vibrant colors, cel shaded, studio quality">Anime</option>
+          <option value="cyberpunk, neon lights, futuristic city, rain">Cyberpunk</option>
+          <option value="film noir, black and white, high contrast, dramatic shadows">Noir</option>
+          <option value="3D render, pixar style, octane render, soft lighting">3D</option>
+          <option value="dreamlike, surreal, soft focus, pastel colors">Onírico</option>
+        </select>
+      </div>
+      <div>
+        <label>4. Formato</label>
+        <select id="formato">
+          <option value="16:9">Computadora (16:9)</option>
+          <option value="9:16">Celular (9:16)</option>
+        </select>
+      </div>
+    </div>
+    <p class="hint">Prototipo gratis: usa animación tipo "Ken Burns" (zoom/pan) sobre imágenes generadas por IA, en vez de animación IA de movimiento (esa requiere GPU de pago). Para canciones cortas (&lt;60s) funciona mejor en el navegador.</p>
+
+    <button id="btnCrear">▶ Crear video</button>
+    <div class="bar"><div id="barFill"></div></div>
+    <div id="log"></div>
+    <video id="preview" controls style="display:none"></video>
+    <a id="dl" class="dl" style="display:none" download="videoclip.mp4">⬇ Descargar MP4</a>
+  </div>
+</div>
+
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const logEl = $('log'), barFill = $('barFill');
+
+function log(msg, cls){
+  const d = document.createElement('div');
+  if (cls) d.className = cls;
+  d.textContent = msg;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function progress(pct){ barFill.style.width = pct + '%'; }
+
+// ---------- 1. duración del audio (Web Audio API, sin librerías) ----------
+async function obtenerDuracion(file){
+  const arrayBuffer = await file.arrayBuffer();
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const audioBuffer = await ctx.decodeAudioData(arrayBuffer.slice(0));
+  const dur = audioBuffer.duration;
+  ctx.close();
+  return dur;
+}
+
+// ---------- 2. guion / storyboard gratis vía Pollinations Text (sin key) ----------
+async function generarStoryboard(letra, duracion, estiloTexto){
+  const nEscenas = Math.max(4, Math.round(duracion / 6));
+  const prompt = `Eres director de videoclips. Duración de la canción: ${Math.round(duracion)}s.
+Letra o tema: """${letra.slice(0, 3000)}"""
+Estilo visual: ${estiloTexto}
+Crea EXACTAMENTE ${nEscenas} escenas en orden narrativo (intro, versos, coro...).
+Cada "prompt" debe ser una descripción visual corta EN INGLÉS, concreta, sin texto en pantalla.
+Responde SOLO JSON válido, sin markdown: {"escenas":[{"seccion":"intro","prompt":"..."}]}`;
+
+  const r = await fetch('https://text.pollinations.ai/openai', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      model: 'openai',
+      messages: [
+        {role: 'system', content: 'Responde SOLO con JSON valido, sin markdown ni explicaciones.'},
+        {role: 'user', content: prompt}
+      ]
+    })
+  });
+  if (!r.ok) throw new Error('Pollinations Text falló: HTTP ' + r.status);
+  const data = await r.json();
+  let txt = data.choices[0].message.content.trim();
+  if (txt.startsWith('```')) txt = txt.replace(/^```[a-z]*\n?/, '').replace(/```$/, '').trim();
+  const m = txt.match(/\{[\s\S]*\}/);
+  const parsed = JSON.parse(m ? m[0] : txt);
+  return parsed.escenas.slice(0, nEscenas);
+}
+
+// ---------- 3. imagen gratis vía Pollinations Image (sin key) ----------
+async function generarImagen(prompt, w, h, seed){
+  const url = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(prompt.slice(0, 1200))
+    + `?width=${w}&height=${h}&nologo=true&seed=${seed}&model=flux`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('Pollinations Image falló: HTTP ' + r.status);
+  return new Uint8Array(await r.arrayBuffer());
+}
+
+// ---------- 4. montaje con FFmpeg.wasm (Ken Burns + mux audio) ----------
+async function crearVideo({ffmpeg, escenas, imagenes, audioBytes, audioExt, w, h, durEscena}){
+  const { fetchFile } = FFmpeg;
+  const fps = 24;
+  const frames = Math.round(durEscena * fps);
+
+  for (let i = 0; i < escenas.length; i++){
+    ffmpeg.FS('writeFile', `img${i}.png`, imagenes[i]);
+    log(`  🎞️ Animando escena ${i+1}/${escenas.length} (Ken Burns)...`, 'step');
+    await ffmpeg.run(
+      '-loop', '1', '-i', `img${i}.png`,
+      '-vf', `scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},zoompan=z='min(zoom+0.0012,1.3)':d=${frames}:s=${w}x${h}:fps=${fps}`,
+      '-t', String(durEscena), '-pix_fmt', 'yuv420p', `clip${i}.mp4`
+    );
+    progress(20 + Math.round(((i + 1) / escenas.length) * 50));
+  }
+
+  const lista = escenas.map((_, i) => `file 'clip${i}.mp4'`).join('\n');
+  ffmpeg.FS('writeFile', 'lista.txt', lista);
+  log('🔗 Uniendo escenas...', 'step');
+  await ffmpeg.run('-f', 'concat', '-safe', '0', '-i', 'lista.txt', '-c', 'copy', 'sin_audio.mp4');
+  progress(80);
+
+  ffmpeg.FS('writeFile', `audio.${audioExt}`, audioBytes);
+  log('🎵 Mezclando con el audio original...', 'step');
+  await ffmpeg.run(
+    '-i', 'sin_audio.mp4', '-i', `audio.${audioExt}`,
+    '-c:v', 'copy', '-c:a', 'aac', '-shortest', 'final.mp4'
+  );
+  progress(95);
+
+  const data = ffmpeg.FS('readFile', 'final.mp4');
+  return new Blob([data.buffer], {type: 'video/mp4'});
+}
+
+// ---------- flujo principal ----------
+$('btnCrear').addEventListener('click', async () => {
+  const btn = $('btnCrear');
+  const audioFile = $('audio').files[0];
+  const letra = $('letra').value.trim();
+  const estiloTexto = $('estilo').value;
+  const formato = $('formato').value;
+
+  if (!audioFile){ log('⚠️ Sube un archivo de audio primero.', 'err'); return; }
+  if (!letra){ log('⚠️ Escribe la letra o una descripción de la canción.', 'err'); return; }
+
+  btn.disabled = true;
+  logEl.innerHTML = '';
+  progress(0);
+  $('preview').style.display = 'none';
+  $('dl').style.display = 'none';
+
+  try {
+    log('⏳ Cargando FFmpeg (una sola vez, ~25 MB)...', 'step');
+    const { createFFmpeg } = FFmpeg;
+    const ffmpeg = createFFmpeg({
+      log: false,
+      corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
+    });
+    await ffmpeg.load();
+    progress(5);
+
+    log('🎧 Analizando duración del audio...', 'step');
+    const duracion = await obtenerDuracion(audioFile);
+    log(`  → duración: ${duracion.toFixed(1)}s`, 'ok');
+    progress(10);
+
+    log('✍️ Generando guion / storyboard (IA gratis, Pollinations)...', 'step');
+    const escenas = await generarStoryboard(letra, duracion, estiloTexto);
+    log(`  → ${escenas.length} escenas generadas`, 'ok');
+    progress(20);
+
+    const [w, h] = formato === '16:9' ? [960, 540] : [540, 960];
+    const imagenes = [];
+    for (let i = 0; i < escenas.length; i++){
+      log(`🖼️ Generando imagen ${i+1}/${escenas.length}...`, 'step');
+      const full = `${escenas[i].prompt}, ${estiloTexto}`;
+      const bytes = await generarImagen(full, w, h, 100 + i);
+      imagenes.push(bytes);
+      progress(20 + Math.round(((i + 1) / escenas.length) * 20));
+    }
+
+    const durEscena = duracion / escenas.length;
+    const audioBytes = new Uint8Array(await audioFile.arrayBuffer());
+    const audioExt = (audioFile.name.split('.').pop() || 'mp3').toLowerCase();
+
+    log('🎬 Montando el video final...', 'step');
+    const blob = await crearVideo({ ffmpeg, escenas, imagenes, audioBytes, audioExt, w, h, durEscena });
+
+    const url = URL.createObjectURL(blob);
+    $('preview').src = url;
+    $('preview').style.display = 'block';
+    $('dl').href = url;
+    $('dl').style.display = 'inline-block';
+    progress(100);
+    log('✅ ¡Video listo!', 'ok');
+  } catch (err) {
+    console.error(err);
+    log('❌ Error: ' + err.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
