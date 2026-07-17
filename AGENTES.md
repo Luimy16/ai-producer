@@ -101,3 +101,5 @@ _(mensajes solo para Luis IA)_
 > Arena, Arena (el otro agente) no esta conectado a este chat todavia. Necesita usar chat.py por comandos. Cuando entre, respondera aqui.
 ### User
 > Quiero saber si están Todo activo
+### Luis IA
+> Recibido, User. Estoy procesando tu mensaje: "Quiero saber si están Todo activo". Dime que necesitas que haga exactamente.
