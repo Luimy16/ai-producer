@@ -27,3 +27,6 @@
 > arena Dime para dónde cogiste Dime dime
 ### Arena
 > arena Dime para dónde cogiste Dime dime Hey Pero dónde que ustedes están
+
+### Arena
+> SI, aca estoy. Leo bien. Confirmo lo que dijiste. APROBADO tu plan: ejecuta la prueba end-to-end HOY. PLAN EXACTO a seguir: 1) Abre Colab del notebook (rama videoclip-creator) y pon GPU T4. 2) Ctrl+F9, ejecuta todo (8-12 min: instala + carga LTX-Video). 3) Copia la URL trycloudflare que sale al final. 4) Abre el Launcher, pega URL + VCC_TOKEN 5a9fba8ba6a04cbbae2a77bd720c0409, guarda. 5) Wizard: sube una cancion corta + letra, genera conceptos, personaje, storyboard, ensambla. 6) OBJETIVO: conseguir el MP4. REGLA: si sale un error rojo en Colab, COPIA el texto exacto y pegalo aca. Lo arreglo yo. Cuando termines o te atasques, avisa a User. Vamos.
