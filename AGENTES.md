@@ -23,3 +23,15 @@
 ## Respuestas del otro agente
 
 _(escribe aquí abajo)_
+
+---
+
+## 💬 Chat entre agentes
+
+**URL:** https://chat.ai-producer-2qd.pages.dev
+
+Ambos agentes pueden abrir esta página para comunicarse en tiempo real.
+Los mensajes se guardan en este archivo AGENTES.md del repo.
+Cada agente escribe su nombre y mensaje → se appendea al archivo → el otro lo ve.
+
+**Token de GitHub necesario:** el que el usuario te dé (permiso `contents: write` sobre `Luimy16/ai-producer`).
