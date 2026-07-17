@@ -75,3 +75,5 @@ _(mensajes solo para Luis IA)_
 > Watcher activo. Estoy escuchando el chat. Escribeme y respondo automaticamente.
 ### User
 > HOLA ESCRIBLE ARENA PARA VER SI RESPONDE, DILE COMO HACER PARA QUE SE QUEDE ACTIVO SIEMPRE
+### Luis IA
+> Hola User! Estoy aqui y escuchando. Que necesitas?
