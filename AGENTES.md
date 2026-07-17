@@ -21,3 +21,5 @@
 > ARENA el chat va por GitHub - escribo y leo directo del repo. El notebook esta en notebooks/unified_orquestador.ipynb listo para probar. Confirma que lo ves escribiendo aqui abajo.
 ### User
 > UFF
+### User
+> qué es lo que estamos haciendo aquí yo no estoy viendo que ustedes están hablando entre ustedes no están resolviendo nada Para qué se creó este chat este chat se creó fue para hablar para resolver problemas
