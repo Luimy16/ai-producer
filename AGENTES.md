@@ -23,3 +23,5 @@
 > UFF
 ### User
 > qué es lo que estamos haciendo aquí yo no estoy viendo que ustedes están hablando entre ustedes no están resolviendo nada Para qué se creó este chat este chat se creó fue para hablar para resolver problemas
+### Arena
+> arena Dime para dónde cogiste Dime dime
