@@ -3,56 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎬 Lanzador + Creador — VideoClip Creator IA</title>
+<title>🎬 VideoClip Creator IA</title>
 <style>
   :root{--acc:#7c5cff;--acc2:#00e0a4;--bg:#0b0b12;--card:#171722;--txt:#eceaf5;--mut:#9a97ad;--warn:#ffb454;--err:#ff6b7a}
   *{box-sizing:border-box;margin:0}
   body{background:radial-gradient(1200px 600px at 50% -10%,#221a4d 0%,var(--bg) 60%);
        color:var(--txt);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;
-       display:flex;flex-direction:column;align-items:center;padding:40px 16px}
-  h1{font-size:2rem;margin-bottom:4px;text-align:center}
-  .sub{color:var(--mut);margin-bottom:24px;text-align:center}
-  .play{width:170px;height:170px;border-radius:50%;border:0;cursor:pointer;font-size:3.8rem;
+       display:flex;flex-direction:column;align-items:center;padding:20px 16px 40px}
+  h1{font-size:1.8rem;margin-bottom:4px;text-align:center}
+  .sub{color:var(--mut);margin-bottom:20px;text-align:center;font-size:.9rem}
+  .play{width:140px;height:140px;border-radius:50%;border:0;cursor:pointer;font-size:3rem;
         background:linear-gradient(135deg,var(--acc),#4a2fe0);color:#fff;
-        box-shadow:0 0 60px rgba(124,92,255,.5),inset 0 -6px 18px rgba(0,0,0,.35);
-        transition:.25s;display:flex;align-items:center;justify-content:center;padding-left:12px}
-  .play:hover{transform:scale(1.06);box-shadow:0 0 90px rgba(124,92,255,.75)}
+        box-shadow:0 0 50px rgba(124,92,255,.5),inset 0 -6px 18px rgba(0,0,0,.35);
+        transition:.25s;display:flex;align-items:center;justify-content:center;padding-left:10px}
+  .play:hover{transform:scale(1.06)}
   .play:active{transform:scale(.97)}
 
-  /* === CONFIG PANEL === */
-  .cfg-panel{background:var(--card);border:1px solid #2a2a3c;border-radius:16px;padding:20px 24px;
-             max-width:600px;width:100%;margin-bottom:24px}
-  .cfg-panel h3{font-size:1rem;margin-bottom:14px;color:var(--acc2)}
-  .cfg-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
-  .cfg-row label{font-size:.85rem;color:var(--mut);min-width:90px}
-  .cfg-row input{flex:1;min-width:200px;background:#101018;border:1px solid #2a2a3c;color:var(--txt);
-                 padding:10px 14px;border-radius:10px;font-size:.9rem;font-family:monospace}
+  .cfg-panel{background:var(--card);border:1px solid #2a2a3c;border-radius:14px;padding:16px 20px;
+             max-width:680px;width:100%;margin-bottom:20px}
+  .cfg-panel h3{font-size:.95rem;margin-bottom:12px;color:var(--acc2)}
+  .cfg-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .cfg-row label{font-size:.8rem;color:var(--mut);min-width:80px}
+  .cfg-row input,.cfg-row select{flex:1;min-width:180px;background:#101018;border:1px solid #2a2a3c;
+                 color:var(--txt);padding:9px 12px;border-radius:8px;font-size:.85rem;font-family:monospace}
   .cfg-row input:focus{outline:none;border-color:var(--acc)}
-  .cfg-row button{background:var(--acc);color:#fff;border:0;padding:10px 16px;border-radius:10px;
-                  cursor:pointer;font-size:.85rem;font-weight:700;white-space:nowrap}
+  .cfg-row button{background:var(--acc);color:#fff;border:0;padding:9px 14px;border-radius:8px;
+                  cursor:pointer;font-size:.8rem;font-weight:700;white-space:nowrap}
   .cfg-row button:hover{opacity:.9}
-  .cfg-status{font-size:.8rem;margin-top:6px}
+  .cfg-status{font-size:.78rem;margin-top:4px}
   .cfg-status.ok{color:var(--acc2)}
   .cfg-status.err{color:var(--warn)}
 
-  /* === WIZARD STEPS === */
-  .steps-nav{display:flex;gap:8px;margin:20px 0;flex-wrap:wrap;justify-content:center;max-width:700px;width:100%}
-  .steps-nav li{list-style:none;padding:8px 16px;border-radius:20px;background:var(--card);border:1px solid #2a2a3c;
-                font-size:.8rem;color:var(--mut);transition:.2s;cursor:default}
+  .steps-nav{display:flex;gap:6px;margin:16px 0;flex-wrap:wrap;justify-content:center;max-width:680px;width:100%}
+  .steps-nav li{list-style:none;padding:7px 14px;border-radius:18px;background:var(--card);border:1px solid #2a2a3c;
+                font-size:.75rem;color:var(--mut);transition:.2s}
   .steps-nav li.activo{background:var(--acc);color:#fff;border-color:var(--acc)}
   .steps-nav li.hecho{background:#0e2a20;border-color:#1d4d3f;color:var(--acc2)}
 
-  #wizard{max-width:700px;width:100%;display:block}
-  .step{display:none;background:var(--card);border:1px solid #26263a;border-radius:16px;padding:24px}
+  #wizard{max-width:680px;width:100%;display:block}
+  .step{display:none;background:var(--card);border:1px solid #26263a;border-radius:14px;padding:20px}
   .step.activo{display:block}
-  .step h3{font-size:1.1rem;margin-bottom:16px;color:var(--acc2)}
-  .step textarea,.step select{width:100%;background:#101018;border:1px solid #2a2a3c;color:var(--txt);
-                              padding:12px;border-radius:10px;font-size:.9rem;margin-bottom:12px;resize:vertical}
+  .step h3{font-size:1.05rem;margin-bottom:14px;color:var(--acc2)}
+  .step textarea,.step select,.step input[type=file]{width:100%;background:#101018;border:1px solid #2a2a3c;
+                              color:var(--txt);padding:10px;border-radius:8px;font-size:.85rem;margin-bottom:10px;resize:vertical}
   .step textarea:focus{border-color:var(--acc);outline:none}
+  .step input[type=file]{padding:8px}
   .step select{appearance:none;cursor:pointer}
 
-  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;border:0;border-radius:12px;
-       cursor:pointer;font-size:.9rem;transition:.2s;padding:12px 24px}
+  .btn{display:inline-flex;align-items:center;gap:6px;font-weight:700;border:0;border-radius:10px;
+       cursor:pointer;font-size:.85rem;transition:.2s;padding:11px 22px}
   .btn:disabled{opacity:.4;cursor:not-allowed}
   .btn-primary{background:linear-gradient(135deg,var(--acc),#4a2fe0);color:#fff}
   .btn-primary:hover:not(:disabled){transform:translateY(-1px)}
@@ -60,74 +59,74 @@
   .btn-success:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.1)}
   .btn-full{width:100%;justify-content:center}
 
-  .result-box{margin-top:16px;padding:16px;background:#101018;border-radius:12px;min-height:60px}
+  .result-box{margin-top:14px;padding:14px;background:#101018;border-radius:10px;min-height:50px}
   .result-box img,.result-box video{max-width:100%;border-radius:8px;margin-top:8px}
-  .result-box h4{font-size:.9rem;color:var(--acc);margin-bottom:8px}
+  .result-box h4{font-size:.85rem;color:var(--acc);margin-bottom:6px}
 
-  .card-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:12px}
-  .card{cursor:pointer;background:#101018;border:1px solid #2a2a3c;border-radius:12px;padding:14px;transition:.2s}
+  .card-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:10px}
+  .card{cursor:pointer;background:#101018;border:1px solid #2a2a3c;border-radius:10px;padding:12px;transition:.2s}
   .card:hover{border-color:var(--acc);background:#15152a}
-  .card h4{font-size:.9rem;color:var(--acc);margin-bottom:4px}
-  .card p{font-size:.8rem;color:var(--mut)}
+  .card h4{font-size:.85rem;color:var(--acc);margin-bottom:3px}
+  .card p{font-size:.75rem;color:var(--mut)}
 
-  .escena{border:1px solid #2a2a3c;border-radius:12px;padding:14px;margin-bottom:10px;background:#101018}
-  .escena .head{font-size:.85rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-  .escena .head b{color:var(--acc)}.escena .est{font-size:.8rem}
-  .escena textarea{font-size:.82rem;margin-bottom:6px;min-height:40px}
-  .escena .media img,.escena .media video{max-width:100%;border-radius:6px;margin-top:6px}
+  .escena{border:1px solid #2a2a3c;border-radius:10px;padding:12px;margin-bottom:8px;background:#101018}
+  .escena .head{font-size:.8rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .escena .head b{color:var(--acc)}.escena .est{font-size:.75rem}
+  .escena textarea{font-size:.78rem;margin-bottom:4px;min-height:36px}
+  .escena .media img,.escena .media video{max-width:100%;border-radius:6px;margin-top:4px}
 
-  .progress{height:6px;background:#2a2a3c;border-radius:3px;margin:12px 0;overflow:hidden}
+  .progress{height:5px;background:#2a2a3c;border-radius:3px;margin:10px 0;overflow:hidden}
   .progress div{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:.3s}
 
-  .error-box{background:#3d1620;border:1px solid #6b2135;color:var(--err);padding:12px 16px;border-radius:10px;
-             margin:12px 0;font-size:.85rem;display:none}
-  .info-box{background:#16243d;border:1px solid #2a4a6b;color:#8fc8ff;padding:12px 16px;border-radius:10px;
-            margin:12px 0;font-size:.85rem}
+  .error-box{background:#3d1620;border:1px solid #6b2135;color:var(--err);padding:10px 14px;border-radius:8px;
+             margin:10px 0;font-size:.8rem;display:none}
+  .info-box{background:#16243d;border:1px solid #2a4a6b;color:#8fc8ff;padding:10px 14px;border-radius:8px;
+            margin:10px 0;font-size:.8rem}
 
-  footer{margin-top:40px;color:var(--mut);font-size:.8rem;text-align:center;opacity:.6}
+  footer{margin-top:30px;color:var(--mut);font-size:.75rem;text-align:center;opacity:.6}
+  @media(max-width:600px){h1{font-size:1.4rem}.cfg-row label{min-width:70px}.play{width:110px;height:110px;font-size:2.4rem}}
 </style>
 </head>
 <body>
 
 <h1>🎬 VideoClip Creator IA</h1>
-<p class="sub">Todo en un solo Colab — Sin VPS, sin WordPress, sin registro</p>
+<p class="sub">Sube tu canción → La IA crea un videoclip completo con GPU T4 gratis</p>
 
-<!-- CONFIG PANEL -->
-<div class="cfg-panel" id="cfg-panel">
-  <h3>⚙️ Configuración (se guarda automáticamente)</h3>
+<!-- CONFIG -->
+<div class="cfg-panel">
+  <h3>⚙️ Conexión con Colab</h3>
   <div class="cfg-row">
-    <label>🔗 URL Orquestador:</label>
-    <input type="text" id="cfg-url" placeholder="Pega la URL del túnel de Colab...">
+    <label>🔗 URL:</label>
+    <input type="text" id="cfg-url" placeholder="Pega aquí la URL de Colab (https://...trycloudflare.com)">
   </div>
   <div class="cfg-row">
-    <label>🔐 VCC Token:</label>
-    <input type="password" id="cfg-token" placeholder="Token del .env...">
+    <label>🔐 Token:</label>
+    <input type="password" id="cfg-token" placeholder="VCC_TOKEN">
   </div>
   <div class="cfg-row">
-    <label>🎵 Modo Video:</label>
-    <select id="cfg-format" style="flex:1;min-width:150px;background:#101018;border:1px solid #2a2a3c;
-     color:var(--txt);padding:10px 14px;border-radius:10px;font-size:.9rem">
-      <option value="16:9">16:9 (Horizontal)</option>
-      <option value="9:16">9:16 (Vertical / TikTok)</option>
+    <label>📐 Formato:</label>
+    <select id="cfg-format">
+      <option value="16:9">16:9 Horizontal (YouTube)</option>
+      <option value="9:16">9:16 Vertical (TikTok/Reels)</option>
     </select>
     <button onclick="saveConfig()">💾 Guardar</button>
   </div>
   <div class="cfg-status" id="cfg-status"></div>
 </div>
 
-<!-- PLAY BUTTON -->
-<div style="text-align:center;margin:20px 0">
+<!-- PLAY -->
+<div style="text-align:center;margin:16px 0">
   <button class="play" onclick="abrirColab()" title="Abrir Colab con GPU T4">▶</button>
-  <p style="margin-top:10px;font-size:.85rem;color:var(--mut)">Abre el notebook en Colab → Ctrl+F9 → copia la URL y pégala aquí ↑</p>
-  <button onclick="checkOrq()" class="btn btn-primary" style="margin-top:12px;font-size:.8rem;padding:8px 16px">
-    🔍 Verificar Conexión
+  <p style="margin-top:8px;font-size:.8rem;color:var(--mut)">1. Abre Colab → 2. GPU T4 → 3. Ctrl+F9 → 4. Copia la URL → 5. Pégala arriba</p>
+  <button onclick="checkOrq()" class="btn btn-primary" style="margin-top:10px;font-size:.78rem;padding:7px 14px">
+    🔍 Probar Conexión
   </button>
-  <span id="orq-status" style="font-size:.8rem;margin-left:8px"></span>
+  <span id="orq-status" style="font-size:.78rem;margin-left:6px"></span>
 </div>
 
-<!-- WIZARD 5 STEPS -->
+<!-- WIZARD -->
 <ul class="steps-nav" id="steps-nav">
-  <li data-paso="1">1. 🎵 Canción</li>
+  <li class="activo" data-paso="1">1. 🎵 Canción</li>
   <li data-paso="2">2. 🎨 Conceptos</li>
   <li data-paso="3">3. 👤 Personaje</li>
   <li data-paso="4">4. 📋 Storyboard</li>
@@ -135,94 +134,77 @@
 </ul>
 
 <div id="wizard">
-  <!-- PASO 1: Subir canción -->
+  <!-- PASO 1 -->
   <div class="step activo" data-step="1">
-    <h3>🎵 Paso 1: Subir tu canción</h3>
-    <input type="file" id="s1-audio" accept="audio/*" style="color:var(--mut)">
-    <textarea id="s1-letra" rows="5" placeholder="Pega la letra de la canción aquí (mín. 10 caracteres)..."></textarea>
-    <button class="btn btn-primary btn-full" id="s1-btn" onclick="paso1()" disabled>
-      🧠 Analizar Canción
-    </button>
+    <h3>🎵 Paso 1: Sube tu canción</h3>
+    <input type="file" id="s1-audio" accept="audio/*">
+    <textarea id="s1-letra" rows="4" placeholder="Pega la letra de la canción aquí..."></textarea>
+    <button class="btn btn-primary btn-full" id="s1-btn" onclick="paso1()" disabled>🧠 Analizar Canción</button>
     <div class="result-box" id="s1-result" style="display:none"></div>
   </div>
 
-  <!-- PASO 2: Conceptos -->
+  <!-- PASO 2 -->
   <div class="step" data-step="2">
-    <h3>🎨 Paso 2: Elegir concepto visual</h3>
-    <p style="color:var(--mut);font-size:.85rem;margin-bottom:12px">Gemini generará 3 conceptos visuales basados en tu letra y la IA elegirá el mejor.</p>
-    <button class="btn btn-primary btn-full" id="s2-btn" onclick="paso2()">
-      ✨ Generar 3 Conceptos
-    </button>
+    <h3>🎨 Paso 2: Elige un concepto visual</h3>
+    <button class="btn btn-primary btn-full" id="s2-btn" onclick="paso2()">✨ Generar 3 Conceptos</button>
     <div class="card-list" id="s2-cards"></div>
   </div>
 
-  <!-- PASO 3: Personaje -->
+  <!-- PASO 3 -->
   <div class="step" data-step="3">
     <h3>👤 Paso 3: Hoja de personaje</h3>
-    <textarea id="s3-desc" rows="3" placeholder="Descripción del personaje... (puedes editar la sugerida)"></textarea>
-    <button class="btn btn-primary btn-full" id="s3-btn" onclick="paso3()">
-      🖼️ Generar Personaje (30-60s)
-    </button>
+    <textarea id="s3-desc" rows="3" placeholder="Descripción del personaje..."></textarea>
+    <button class="btn btn-primary btn-full" id="s3-btn" onclick="paso3()">🖼️ Generar Personaje</button>
     <div class="result-box" id="s3-result" style="display:none"></div>
-    <button class="btn btn-success btn-full" id="s3-next" onclick="irPaso(4)" style="margin-top:12px;display:none">
-      ✅ Aprobar Personaje → Storyboard
-    </button>
+    <button class="btn btn-success btn-full" id="s3-next" onclick="irPaso(4)" style="margin-top:10px;display:none">✅ Aprobar → Storyboard</button>
   </div>
 
-  <!-- PASO 4: Storyboard -->
+  <!-- PASO 4 -->
   <div class="step" data-step="4">
     <h3>📋 Paso 4: Storyboard + Escenas</h3>
-    <button class="btn btn-primary btn-full" id="s4-btn" onclick="paso4()">
-      🧠 Crear Storyboard
-    </button>
+    <button class="btn btn-primary btn-full" id="s4-btn" onclick="paso4()">🧠 Crear Storyboard</button>
     <div id="s4-escenas"></div>
-    <button class="btn btn-success btn-full" id="s4-gen" onclick="generarTodas()" style="display:none;margin-top:12px">
-      🎬 Generar Todas las Escenas (GPU Colab)
-    </button>
+    <button class="btn btn-success btn-full" id="s4-gen" onclick="generarTodas()" style="display:none;margin-top:10px">🎬 Generar Todas las Escenas</button>
     <div class="progress" id="s4-progress" style="display:none"><div id="s4-bar" style="width:0%"></div></div>
     <div class="result-box" id="s4-status" style="display:none"></div>
   </div>
 
-  <!-- PASO 5: Ensamblar -->
+  <!-- PASO 5 -->
   <div class="step" data-step="5">
     <h3>🎬 Paso 5: Ensamblar Videoclip Final</h3>
-    <button class="btn btn-success btn-full" id="s5-btn" onclick="paso5()">
-      🎥 Ensamblar con FFmpeg
-    </button>
+    <button class="btn btn-success btn-full" id="s5-btn" onclick="paso5()">🎥 Ensamblar con FFmpeg</button>
     <div class="result-box" id="s5-result" style="display:none"></div>
   </div>
 
   <div class="error-box" id="error-box"></div>
 </div>
 
-<footer>VideoClip Creator IA — Todo gratis con GPU T4 de Google Colab</footer>
+<footer>VideoClip Creator IA — GPU T4 Google Colab + LTX-Video + Pollinations</footer>
 
 <script>
-// ============ CONFIGURACIÓN (localStorage) ============
 const LS = {
   get(k,d){try{return localStorage.getItem('vcc_'+k)||d}catch{return d}},
   set(k,v){try{localStorage.setItem('vcc_'+k,v)}catch{}}
 };
 
-// Cargar al iniciar
 document.getElementById('cfg-url').value = LS.get('url','');
-document.getElementById('cfg-token').value = LS.get('token','');
+document.getElementById('cfg-token').value = LS.get('token','5a9fba8ba6a04cbbae2a77bd720c0409');
 document.getElementById('cfg-format').value = LS.get('format','16:9');
 
 function saveConfig(){
-  LS.set('url', document.getElementById('cfg-url').value.trim());
+  LS.set('url', document.getElementById('cfg-url').value.trim().replace(/\/+$/,''));
   LS.set('token', document.getElementById('cfg-token').value.trim());
   LS.set('format', document.getElementById('cfg-format').value);
-  document.getElementById('cfg-status').textContent = '✅ Guardado';
-  document.getElementById('cfg-status').className = 'cfg-status ok';
-  setTimeout(()=>{document.getElementById('cfg-status').textContent='';},2000);
+  const s = document.getElementById('cfg-status');
+  s.textContent = '✅ Guardado';
+  s.className = 'cfg-status ok';
+  setTimeout(()=>{s.textContent='';},2000);
 }
 
 function getApi(){ return LS.get('url','').replace(/\/+$/,''); }
 function getToken(){ return LS.get('token',''); }
 function getFormato(){ return LS.get('format','16:9'); }
 
-// Validar input paso 1
 document.getElementById('s1-audio').addEventListener('change',validarP1);
 document.getElementById('s1-letra').addEventListener('input',validarP1);
 function validarP1(){
@@ -231,43 +213,36 @@ function validarP1(){
   document.getElementById('s1-btn').disabled = !(a && l);
 }
 
-// ============ COLAB ============
 function abrirColab(){
   const r = 'Luimy16/ai-producer';
   const b = 'videoclip-creator';
-  const nb = `notebooks/unified_orquestador.ipynb`;
+  const nb = 'notebooks/unified_orquestador.ipynb';
   window.open(`https://colab.research.google.com/github/${r}/blob/${b}/${nb}`,'_blank');
 }
 
 async function checkOrq(){
   const api = getApi();
   const s = document.getElementById('orq-status');
-  if(!api){ s.textContent='❌ Configura la URL primero';s.style.color='var(--warn)';return}
+  if(!api){ s.textContent='❌ Pega la URL primero';s.style.color='var(--warn)';return}
   s.textContent='⏳ Verificando...';s.style.color='var(--mut)';
   try{
     const r = await fetch(`${api}/api/health`);
-    if(r.ok){ s.textContent='✅ Conectado';s.style.color='var(--acc2)'; }
-    else { s.textContent='❌ Error: '+r.status;s.style.color='var(--warn)'; }
+    const j = await r.json();
+    if(r.ok && j.ok){
+      s.textContent = '✅ Conectado · GPU: ' + (j.gpu ? 'Sí' : 'No');
+      s.style.color = 'var(--acc2)';
+    } else { s.textContent='❌ Error';s.style.color='var(--warn)'; }
   }catch(e){ s.textContent='❌ Sin conexión';s.style.color='var(--warn)'; }
 }
 
-// ============ ESTADO GLOBAL ============
 let state = {proyecto:null, conceptos:[], concepto:null, escenas:[]};
 
-// ============ API CALL ============
 async function apiCall(method, path, body=null, isForm=false){
   const api = getApi();
-  if(!api) throw new Error('Configura la URL del orquestador primero');
-  const opts = {
-    method,
-    headers: { 'X-Token': getToken() },
-  };
-  if(isForm){
-    opts.body = body; // FormData
-  } else if(body){
-    opts.headers['Content-Type'] = 'application/json';
-    opts.body = JSON.stringify(body);
-  }
+  if(!api) throw new Error('Configura la URL del orquestador');
+  const opts = { method, headers: { 'X-Token': getToken() } };
+  if(isForm){ opts.body = body; }
+  else if(body){ opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
   const r = await fetch(`${api}${path}`, opts);
   if(!r.ok){
     let msg = `Error ${r.status}`;
@@ -283,7 +258,7 @@ function showError(msg){
   const e = document.getElementById('error-box');
   e.textContent = '⚠️ ' + msg;
   e.style.display = 'block';
-  setTimeout(()=>{e.style.display='none'},10000);
+  setTimeout(()=>{e.style.display='none'},12000);
 }
 
 function irPaso(n){
@@ -292,7 +267,6 @@ function irPaso(n){
     li.classList.toggle('activo',+li.dataset.paso===n);
     li.classList.toggle('hecho',+li.dataset.paso<n);
   });
-  document.getElementById('wizard').style.display='block';
 }
 
 function bLoad(btn,loading,txtLoad,txtNormal){
@@ -300,7 +274,7 @@ function bLoad(btn,loading,txtLoad,txtNormal){
   btn.textContent = loading ? txtLoad : txtNormal;
 }
 
-// ============ PASO 1 ============
+// PASO 1
 async function paso1(){
   const btn = document.getElementById('s1-btn');
   bLoad(btn,true,'⏳ Analizando...','🧠 Analizar Canción');
@@ -314,14 +288,13 @@ async function paso1(){
     const r = document.getElementById('s1-result');
     r.style.display = 'block';
     r.innerHTML = `✅ <b>Análisis completado</b><br>
-    🥁 BPM: <b>${j.bpm||'—'}</b> · ⏱ Duración: <b>${j.duracion}s</b> · 📐 Formato: <b>${j.formato}</b><br>
-    <small style="color:var(--mut)">ID: ${j.id}</small>`;
+      🥁 BPM: <b>${j.bpm||'—'}</b> · ⏱ Duración: <b>${j.duracion}s</b> · 📐 <b>${j.formato}</b>`;
     setTimeout(()=>irPaso(2),800);
   }catch(e){ showError(e.message); }
   bLoad(btn,false,'','🧠 Analizar Canción');
 }
 
-// ============ PASO 2 ============
+// PASO 2
 async function paso2(){
   const btn = document.getElementById('s2-btn');
   bLoad(btn,true,'⏳ Pensando...','✨ Generar 3 Conceptos');
@@ -333,7 +306,7 @@ async function paso2(){
       <div class="card" onclick="elegirConcepto(${i})">
         <h4>${c.nombre}</h4>
         <p>${c.descripcion}</p>
-        <p style="font-size:.75rem;color:var(--acc2)">🎨 ${c.paleta}</p>
+        <p style="font-size:.7rem;color:var(--acc2)">🎨 ${c.paleta}</p>
       </div>
     `).join('');
   }catch(e){ showError(e.message); }
@@ -346,10 +319,10 @@ function elegirConcepto(i){
   irPaso(3);
 }
 
-// ============ PASO 3 ============
+// PASO 3
 async function paso3(){
   const btn = document.getElementById('s3-btn');
-  bLoad(btn,true,'⏳ Dibujando (30-60s)...','🖼️ Generar Personaje');
+  bLoad(btn,true,'⏳ Dibujando...','🖼️ Generar Personaje');
   try{
     const j = await apiCall('POST',`/api/proyecto/${state.proyecto}/personaje`,{
       descripcion: document.getElementById('s3-desc').value,
@@ -364,28 +337,24 @@ async function paso3(){
   bLoad(btn,false,'','🖼️ Generar Personaje');
 }
 
-// ============ PASO 4 ============
+// PASO 4
 async function paso4(){
   const btn = document.getElementById('s4-btn');
   bLoad(btn,true,'⏳ Escribiendo...','🧠 Crear Storyboard');
   try{
-    const j = await apiCall('POST',`/api/proyecto/${state.proyecto}/storyboard`,{
-      concepto: state.concepto
-    });
+    const j = await apiCall('POST',`/api/proyecto/${state.proyecto}/storyboard`,{concepto: state.concepto});
     state.escenas = j.escenas;
     renderStoryboard();
     document.getElementById('s4-gen').style.display = 'flex';
-    irPaso(4);
   }catch(e){ showError(e.message); }
   bLoad(btn,false,'','🧠 Crear Storyboard');
 }
 
 function renderStoryboard(){
-  const cont = document.getElementById('s4-escenas');
-  cont.innerHTML = state.escenas.map((esc,i)=>`
+  document.getElementById('s4-escenas').innerHTML = state.escenas.map((esc,i)=>`
     <div class="escena">
       <div class="head">
-        <b>Escena ${i+1}</b> · ${esc.seccion||'—'} · ${esc.duracion}s ${esc.lipsync?'· 💬 lipsync':''}
+        <b>Escena ${i+1}</b> · ${esc.seccion||'—'} · ${esc.duracion}s
         <span class="est" id="s4-est-${i}">⬜</span>
       </div>
       <textarea data-i="${i}" rows="2" onchange="state.escenas[${i}].prompt=this.value">${esc.prompt}</textarea>
@@ -399,26 +368,15 @@ async function generarEscena(i){
   const media = document.getElementById('s4-media-'+i);
   const api = getApi();
   try{
-    est.textContent = '🖼️...';
-    const img = await apiCall('POST',`/api/proyecto/${state.proyecto}/escenas/${i}/imagen`,{
-      prompt: state.escenas[i].prompt
-    });
+    est.textContent = '🖼️';
+    const img = await apiCall('POST',`/api/proyecto/${state.proyecto}/escenas/${i}/imagen`,{prompt: state.escenas[i].prompt});
     media.innerHTML = `<img src="${api}${img.url}" loading="lazy">`;
-    est.textContent = '🎬 GPU...';
-    const vid = await apiCall('POST',`/api/proyecto/${state.proyecto}/escenas/${i}/video`,{
-      prompt: state.escenas[i].prompt,
-      duracion: state.escenas[i].duracion
-    });
-    if(state.escenas[i].lipsync){
-      est.textContent = '💬 lipsync...';
-      await apiCall('POST',`/api/proyecto/${state.proyecto}/escenas/${i}/lipsync`);
-    }
+    est.textContent = '🎬';
+    const vid = await apiCall('POST',`/api/proyecto/${state.proyecto}/escenas/${i}/video`,{prompt: state.escenas[i].prompt, duracion: state.escenas[i].duracion});
     media.innerHTML = `<video src="${api}${vid.url}?t=${Date.now()}" controls muted loop style="max-width:100%;border-radius:6px"></video>`;
-    est.textContent = '✅';
-    est.style.color = 'var(--acc2)';
+    est.textContent = '✅'; est.style.color = 'var(--acc2)';
   }catch(e){
-    est.textContent = '❌';
-    est.style.color = 'var(--warn)';
+    est.textContent = '❌'; est.style.color = 'var(--warn)';
     throw new Error('Escena '+(i+1)+': '+e.message);
   }
 }
@@ -426,26 +384,21 @@ async function generarEscena(i){
 async function generarTodas(){
   const btn = document.getElementById('s4-gen');
   bLoad(btn,true,'⏳ Generando...','🎬 Generar Todas las Escenas');
-  const prog = document.getElementById('s4-progress');
-  const bar = document.getElementById('s4-bar');
-  const status = document.getElementById('s4-status');
-  prog.style.display = 'block';
-  status.style.display = 'block';
-  
+  document.getElementById('s4-progress').style.display = 'block';
+  document.getElementById('s4-status').style.display = 'block';
   const total = state.escenas.length;
   for(let i=0;i<total;i++){
-    status.textContent = `🎬 Escena ${i+1} de ${total} (LTX-Video GPU)...`;
-    bar.style.width = ((i/total)*100)+'%';
-    try{ await generarEscena(i); }
-    catch(e){ showError(e.message); break; }
+    document.getElementById('s4-status').textContent = `Escena ${i+1} de ${total} (LTX-Video GPU)...`;
+    document.getElementById('s4-bar').style.width = ((i/total)*100)+'%';
+    try{ await generarEscena(i); }catch(e){ showError(e.message); break; }
   }
-  bar.style.width = '100%';
-  status.textContent = '✅ Todas las escenas listas';
+  document.getElementById('s4-bar').style.width = '100%';
+  document.getElementById('s4-status').textContent = '✅ Escenas listas';
   bLoad(btn,false,'','🎬 Generar Todas las Escenas');
   setTimeout(()=>irPaso(5),800);
 }
 
-// ============ PASO 5 ============
+// PASO 5
 async function paso5(){
   const btn = document.getElementById('s5-btn');
   bLoad(btn,true,'⏳ Ensamblando...','🎥 Ensamblar con FFmpeg');
@@ -454,20 +407,14 @@ async function paso5(){
     const api = getApi();
     const r = document.getElementById('s5-result');
     r.style.display = 'block';
-    r.innerHTML = `
-      <h4>🎉 ¡Videoclip Listo!</h4>
+    r.innerHTML = `<h4>🎉 ¡Videoclip Listo!</h4>
       <video src="${api}${j.url}?t=${Date.now()}" controls style="width:100%;border-radius:8px"></video>
-      <a class="btn btn-success" href="${api}${j.url}" download="mi-videoclip.mp4" style="margin-top:12px">
-        ⬇️ Descargar MP4
-      </a>`;
+      <a class="btn btn-success" href="${api}${j.url}" download="mi-videoclip.mp4" style="margin-top:10px">⬇️ Descargar MP4</a>`;
   }catch(e){ showError(e.message); }
   bLoad(btn,false,'','🎥 Ensamblar con FFmpeg');
 }
 
-// ============ INIT ============
-// Si hay config guardada, verificar conexión
 if(getApi()) setTimeout(checkOrq,500);
 </script>
-
 </body>
 </html>
